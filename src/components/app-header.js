@@ -21,20 +21,22 @@ class AppHeader extends HTMLElement {
     
     this.innerHTML = /* html */ `
       <header id="main-header" class="header">
-        <img src="/assets/imgs/logotipo.png" alt="Logo Bibliotecas Conectadas" class="logo logo--desktop" id="logo-bibliotecas" />
-        <img src="/assets/imgs/icone.png" alt="Logo Bibliotecas Conectadas" class="logo logo--mobile" id="logo-bibliotecas" />
+        <button type="button" class="logo-button" data-home-link aria-label="Ir para o Dashboard">
+          <img src="/assets/imgs/logotipo.png" alt="Bibliotecas Conectadas" class="logo logo--desktop" />
+          <img src="/assets/imgs/icone.png" alt="" class="logo logo--mobile" aria-hidden="true" />
+        </button>
         
-        <button class="hamburger-btn" id="hamburger-btn" aria-label="Abrir menu">
+        <button type="button" class="hamburger-btn" id="hamburger-btn" aria-label="Abrir menu" aria-controls="side-menu" aria-expanded="false">
           <i class="fa-solid fa-bars"></i>
         </button>
       </header>
       
       <div class="menu-overlay" id="menu-overlay"></div>
       
-      <div class="side-menu" id="side-menu">
+      <nav class="side-menu" id="side-menu" aria-label="Navegação principal" aria-hidden="true">
         <div class="side-menu-header">
           <h3>Menu</h3>
-          <button class="close-menu-btn" id="close-menu-btn" aria-label="Fechar menu">
+          <button type="button" class="close-menu-btn" id="close-menu-btn" aria-label="Fechar menu">
             <i class="fa-solid fa-times"></i>
           </button>
         </div>
@@ -90,7 +92,7 @@ class AppHeader extends HTMLElement {
             </a>
           </li>
         </ul>
-      </div>
+      </nav>
     `;
     
     const hamburgerBtn = this.querySelector("#hamburger-btn");
@@ -101,13 +103,19 @@ class AppHeader extends HTMLElement {
     const openMenu = () => {
       sideMenu.classList.add("open");
       menuOverlay.classList.add("open");
+      sideMenu.setAttribute("aria-hidden", "false");
+      hamburgerBtn.setAttribute("aria-expanded", "true");
       document.body.style.overflow = "hidden";
+      closeMenuBtn.focus();
     };
     
-    const closeMenu = () => {
+    const closeMenu = ({ restoreFocus = true } = {}) => {
       sideMenu.classList.remove("open");
       menuOverlay.classList.remove("open");
+      sideMenu.setAttribute("aria-hidden", "true");
+      hamburgerBtn.setAttribute("aria-expanded", "false");
       document.body.style.overflow = "";
+      if (restoreFocus) hamburgerBtn.focus();
     };
     
     hamburgerBtn.onclick = (e) => {
@@ -124,58 +132,66 @@ class AppHeader extends HTMLElement {
       e.preventDefault();
       closeMenu();
     };
-    
-    this.querySelector("#logo-bibliotecas").onclick = (e) => {
-      e.preventDefault();
-      // window.navigate && window.navigate("/livros"); // original
-      go("/dashboard");
+
+    this._handleEscape = (e) => {
+      if (e.key === "Escape" && sideMenu.classList.contains("open")) {
+        closeMenu();
+      }
     };
+    document.addEventListener("keydown", this._handleEscape);
+    
+    this.querySelectorAll("[data-home-link]").forEach((homeLink) => {
+      homeLink.onclick = (e) => {
+        e.preventDefault();
+        go("/dashboard");
+      };
+    });
     
     this.querySelector("#menu-dashboard-btn").onclick = (e) => {
       e.preventDefault();
-      closeMenu();
+      closeMenu({ restoreFocus: false });
       go("/dashboard");
     };
 
     this.querySelector("#menu-livros-btn").onclick = (e) => {
       e.preventDefault();
-      closeMenu();
+      closeMenu({ restoreFocus: false });
       window.navigate && window.navigate("/livros");
     };
     
     this.querySelector("#menu-unidades-btn").onclick = (e) => {
       e.preventDefault();
-      closeMenu();
+      closeMenu({ restoreFocus: false });
       window.navigate && window.navigate("/unidades");
     };
 
     this.querySelector("#menu-usuarios-btn").onclick = (e) => {
       e.preventDefault();
-      closeMenu();
+      closeMenu({ restoreFocus: false });
       window.navigate && window.navigate("/usuarios");
     };
 
     this.querySelector("#menu-emprestimos-btn").onclick = (e) => {
       e.preventDefault();
-      closeMenu();
+      closeMenu({ restoreFocus: false });
       window.navigate && window.navigate("/emprestimos");
     };
     
     this.querySelector("#menu-faq-btn").onclick = (e) => {
       e.preventDefault();
-      closeMenu();
+      closeMenu({ restoreFocus: false });
       window.navigate && window.navigate("/faq");
     };
     
     this.querySelector("#menu-password-btn").onclick = (e) => {
       e.preventDefault();
-      closeMenu();
+      closeMenu({ restoreFocus: false });
       go("/alterar-senha");
     };
 
     this.querySelector("#menu-logout-btn").onclick = (e) => {
       e.preventDefault();
-      closeMenu();
+      closeMenu({ restoreFocus: false });
       if (window.confirm("Deseja realmente sair do sistema?")) {
         if (window.authController?.logout) {
           window.authController.logout();
@@ -187,6 +203,13 @@ class AppHeader extends HTMLElement {
         go("/login");
       }
     };
+  }
+
+  disconnectedCallback() {
+    if (this._handleEscape) {
+      document.removeEventListener("keydown", this._handleEscape);
+    }
+    document.body.style.overflow = "";
   }
 }
 customElements.define("app-header", AppHeader);
