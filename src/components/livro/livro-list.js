@@ -1,5 +1,6 @@
 import "./livro-list.css";
 import { getLivroActionsDropdown } from "./livro-actions-dropdown.js";
+import { escapeHtml } from "../../utils/html.js";
 
 // Web Component para a lista de livros
 class LivroList extends HTMLElement {
@@ -71,9 +72,9 @@ class LivroList extends HTMLElement {
       .map(
         (livro) => /* html */ `
           <tr data-livro-id="${livro.id}">
-            <td>${livro.titulo}</td>
-            <td>${livro.autor}</td>
-            <td>${livro.isbn || "-"}</td>
+            <td>${escapeHtml(livro.titulo)}</td>
+            <td>${escapeHtml(livro.autor)}</td>
+            <td>${escapeHtml(livro.isbn || "-")}</td>
             <td class="text-end">
               <button
                 type="button"
@@ -140,14 +141,14 @@ class LivroList extends HTMLElement {
                 <label for="filter-tipo-obra">Tipo de Obra:</label>
                 <select id="filter-tipo-obra" name="tipo_obra">
                   <option value="">Todos os tipos</option>
-                  ${tipo_obras.map(t => `<option value="${t.id}">${t.nome}</option>`).join('')}
+                  ${tipo_obras.map(t => `<option value="${t.id}">${escapeHtml(t.nome)}</option>`).join('')}
                 </select>
               </div>
               <div>
                 <label for="filter-unidades">Unidade:</label>
                 <select id="filter-unidades" name="unidades">
                   <option value="">Todas as unidades</option>
-                  ${unidades.map(u => `<option value="${u.id}">${u.nome}</option>`).join('')}
+                  ${unidades.map(u => `<option value="${u.id}">${escapeHtml(u.nome)}</option>`).join('')}
                 </select>
               </div>
             </div>
