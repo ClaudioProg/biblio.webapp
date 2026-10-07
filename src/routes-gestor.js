@@ -1,6 +1,6 @@
 export async function gestorRoutes({ gestorController, gestorView, navigate }) {
   const path = window.location.pathname;
-  if (!/^\/(livros|unidades|usuarios|emprestimos)/.test(path)) {
+  if (!/^\/(dashboard|livros|unidades|usuarios|emprestimos)/.test(path)) {
     return false;
   }
   function clearHeader() {
@@ -89,6 +89,13 @@ export async function gestorRoutes({ gestorController, gestorView, navigate }) {
   }
 
   switch (path) {
+    case "/dashboard":
+      document.body.insertAdjacentHTML(
+        "afterbegin",
+        `<main><app-header></app-header><div id="app-content" class="app-content"></div></main>`
+      );
+      await gestorController.showDashboard();
+      return true;
     case "/livros":
       document.body.insertAdjacentHTML(
         "afterbegin",
