@@ -117,7 +117,6 @@ class EmprestimoList extends HTMLElement {
                   <td>
                     <div class="list-actions">
                       <button class="edit-emprestimo-icon outline border-0" data-id="${item.id}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-                      <button class="delete-emprestimo-icon outline border-0" data-id="${item.id}" title="Excluir"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                   </td>
                 </tr>
@@ -144,15 +143,6 @@ class EmprestimoList extends HTMLElement {
       btn.onclick = (e) => {
         e.preventDefault();
         if (this._onEdit) this._onEdit(parseInt(btn.dataset.id, 10));
-      };
-    });
-
-    this.querySelectorAll(".delete-emprestimo-icon").forEach((btn) => {
-      btn.onclick = async (e) => {
-        e.preventDefault();
-        if (!window.confirm("Tem certeza que deseja excluir este empréstimo?")) return;
-        if (!this._onDelete) return;
-        await Promise.resolve(this._onDelete(parseInt(btn.dataset.id, 10)));
       };
     });
 
