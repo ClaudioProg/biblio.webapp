@@ -36,13 +36,16 @@ export async function authRoutes({ authController, authView, navigate }) {
           navigate("/dashboard"); // só após sucesso
         } catch (err) {
           console.error("Falha no login:", err);
-          // Se seu authView tiver método para mostrar erro, use-o:
+          authView.setLoading?.(false);
+
+          const message =
+            err?.message ||
+            "Não foi possível entrar. Revise usuário/senha e tente novamente.";
+
           if (typeof authView.showError === "function") {
-            authView.showError(
-              "Não foi possível entrar. Revise usuário/senha e tente novamente."
-            );
+            authView.showError(message);
           } else {
-            alert("Não foi possível entrar. Revise usuário/senha e tente novamente.");
+            alert(message);
           }
         } finally {
           authView.setLoading?.(false);
