@@ -1,4 +1,5 @@
 import "./unidade-list.css";
+import { escapeHtml } from "../../utils/html.js";
 
 // Web Component para a listagem de unidades (bibliotecas)
 class UnidadeList extends HTMLElement {
@@ -57,11 +58,11 @@ class UnidadeList extends HTMLElement {
                     .map(
                       (unidade) => /* html */ `
               <tr>
-                <td>${unidade.nome}</td>
-                <td>${unidade.endereco}</td>
-                <td>${unidade.telefone || ""}</td>
-                <td>${unidade.email || ""}</td>
-                <td>${unidade.site || ""}</td>
+                <td>${escapeHtml(unidade.nome)}</td>
+                <td>${escapeHtml(unidade.endereco || "")}</td>
+                <td>${escapeHtml(unidade.telefone || "")}</td>
+                <td>${escapeHtml(unidade.email || "")}</td>
+                <td>${escapeHtml(unidade.site || "")}</td>
                 <td>
                   <div class="list-actions unidade-list-actions">
                       <button class="view-unidade-icon outline border-0" data-id="${

@@ -69,6 +69,12 @@ class AppHeader extends HTMLElement {
               <span>FAQ</span>
             </a>
           </li>
+          <li>
+            <a href="#" id="menu-password-btn" class="side-menu-item">
+              <i class="fa-solid fa-key"></i>
+              <span>Alterar senha</span>
+            </a>
+          </li>
           <li class="menu-divider"></li>
           <li>
             <a href="#" id="menu-logout-btn" class="side-menu-item logout">
@@ -148,12 +154,24 @@ class AppHeader extends HTMLElement {
       window.navigate && window.navigate("/faq");
     };
     
+    this.querySelector("#menu-password-btn").onclick = (e) => {
+      e.preventDefault();
+      closeMenu();
+      go("/alterar-senha");
+    };
+
     this.querySelector("#menu-logout-btn").onclick = (e) => {
       e.preventDefault();
       closeMenu();
       if (window.confirm("Deseja realmente sair do sistema?")) {
-        localStorage.removeItem("isAuthenticated");
-        window.navigate && window.navigate("/login");
+        if (window.authController?.logout) {
+          window.authController.logout();
+        } else {
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("isAuthenticated");
+          localStorage.removeItem("user");
+        }
+        go("/login");
       }
     };
   }

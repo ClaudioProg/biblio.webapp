@@ -1,4 +1,5 @@
 import "./livro-form.css";
+import { escapeHtml } from "../../utils/html.js";
 
 // Web Component para o formulário de livro
 class LivroForm extends HTMLElement {
@@ -90,7 +91,7 @@ class LivroForm extends HTMLElement {
           <select id="tipo_obra" name="tipo_obra">
             <option value="">Selecione o tipo de obra</option>
             ${tipoObras
-            .map((t) => `<option value="${t.id}">${t.nome}</option>`)
+            .map((t) => `<option value="${t.id}">${escapeHtml(t.nome)}</option>`)
             .join("")}
           </select>
         </div>
@@ -100,7 +101,7 @@ class LivroForm extends HTMLElement {
                   <select id="unidade-select">
                     <option value="">Selecione a unidade</option>
                     ${unidades
-                      .map((u) => `<option value="${u.id}">${u.nome}</option>`)
+                      .map((u) => `<option value="${u.id}">${escapeHtml(u.nome)}</option>`)
                       .join("")}
                   </select>
                     </div>
@@ -373,7 +374,7 @@ class LivroForm extends HTMLElement {
               this._livroUnidades
                 .map(
                   (u) =>
-                    `<li><strong>${u.unidade.nome}:</strong> ${u.exemplares} exemplar(es) <button type='button' class='remove-unidade-livro outline' data-id='${u.unidade.id}'>Remover</button></li>`
+                    `<li><strong>${escapeHtml(u.unidade.nome)}:</strong> ${u.exemplares} exemplar(es) <button type='button' class='remove-unidade-livro outline' data-id='${u.unidade.id}'>Remover</button></li>`
                 )
                 .join("") +
               `</ul>`
@@ -447,19 +448,15 @@ class LivroForm extends HTMLElement {
           formFeedback.textContent = "";
           formFeedback.classList.remove("is-error", "is-success", "is-loading");
         }
-        // Adiciona as unidades selecionadas ao form para o controller
-        if (form._livroUnidades && form._livroUnidades.length > 0) {
-          form._unidadesPayload = form._livroUnidades.map((u) => ({
-            unidade: u.unidade.id,
-            exemplares: u.exemplares,
-          }));
-        } else {
-          form._unidadesPayload = [
-            { unidade: unidades[0]?.id || 1, exemplares: 1 },
-          ];
-        }
-        // Tipo de obra selecionado
-        form._tipoObraValue = form.querySelector('[name="tipo_obra"]')?.value || null;
+        // Mantém no próprio Web Component o estado que será enviado pelo GestorView.
+        // Antes este trecho gravava no <form> interno, mas o submit externo lia o
+        // estado do <livro-form>, fazendo as alterações de unidades/exemplares se perderem.
+        this._unidadesPayload = (this._livroUnidades || []).map((u) => ({
+          unidade: u.unidade.id,
+          exemplares: Number(u.exemplares) || 0,
+        }));
+        this._tipoObraValue =
+          form.querySelector('[name="tipo_obra"]')?.value || null;
       });
       // Preencher campos do formulário ao editar
       if (isEdit && this._livroSelecionado) {

@@ -19,6 +19,7 @@ import { GestorView } from "./domains/gestor/gestor-view.js";
 const gestorController = new GestorController();
 window.gestorController = gestorController;
 const authController = new AuthController();
+window.authController = authController;
 const authView = new AuthView();
 const gestorView = new GestorView();
 window.gestorView = gestorView;

@@ -273,6 +273,14 @@ export class GestorController {
 
   async showLivroDetalhe(id) {
     try {
+      if (
+        !this.initData.generos.length ||
+        !this.initData.unidades.length ||
+        !this.initData.tipo_obras.length
+      ) {
+        await this.fetchInitData();
+      }
+
       const livro = await this.service.getLivroById(id);
       this.view = this.view || new GestorView();
       this.view.renderLivroDetalhe(livro, this.initData);
@@ -542,7 +550,7 @@ export class GestorController {
     try {
       const [livrosResp, usuariosResp, unidadesResp] = await Promise.all([
         this.service.listarLivros(),
-        this.service.listarUsuarios(),
+        id ? this.service.listarUsuarios() : this.service.listarUsuarios({ ativo: true }),
         this.service.listarUnidades(),
       ]);
       livros = Array.isArray(livrosResp) ? livrosResp : [];

@@ -36,6 +36,11 @@ export async function router({
     return;
   }
   
+  if (isAuthenticated(authController) && path === "/alterar-senha") {
+    const isAccountRoute = await authRoutes({ authController, authView, navigate });
+    if (isAccountRoute) return;
+  }
+
   if (isAuthenticated(authController)) {
     const isGestorRoute = await gestorRoutes({
       gestorController,
