@@ -51,7 +51,7 @@ export async function router({
   }
   
   if (isAuthenticated(authController)) {
-    navigate("/livros"); 
+    navigate("/dashboard"); 
   } else {
     navigate("/login"); 
   }

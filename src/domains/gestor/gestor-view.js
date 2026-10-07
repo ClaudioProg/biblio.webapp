@@ -45,6 +45,16 @@ export class GestorView {
     // Aqui você pode implementar a renderização no DOM
   }
 
+  renderDashboard(data = {}) {
+    this.hideLoading();
+    const root = document.querySelector("#app-content");
+    if (!root) return;
+
+    root.innerHTML = `<dashboard-page></dashboard-page>`;
+    const dashboard = root.querySelector("dashboard-page");
+    dashboard.data = data;
+  }
+
   renderLivrosPage(livros, onAdd, onEdit, onDelete, onView, onEditExemplares, onEmprestar = null, onFilter = null, initData = {}) {
     this.hideLoading();
     const container =

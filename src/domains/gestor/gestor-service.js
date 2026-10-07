@@ -8,6 +8,10 @@ export class GestorService extends BaseService {
     super();
   }
 
+  async obterAnalyticsResumo() {
+    return this.get("gestor/analytics/resumo/");
+  }
+
   // CRUD de Livros
   async listarLivros(filters = {}) {
     let url = "gestor/livros/";
