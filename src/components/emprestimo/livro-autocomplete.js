@@ -1,4 +1,6 @@
 import "./livro-autocomplete.css";
+import "../isbn/isbn-scanner.js";
+import { normalizeIsbn } from "../../utils/isbn.js";
 
 const MAX_RESULTS = 8;
 const MIN_QUERY_LENGTH = 3;
@@ -74,10 +76,19 @@ class LivroAutocomplete extends HTMLElement {
             spellcheck="false"
             placeholder="${this._escape(this._placeholder || "Digite título, autor ou ISBN") }"
           >
+          <button
+            type="button"
+            class="livro-autocomplete-scan"
+            aria-label="Ler ISBN pela câmera"
+            title="Ler ISBN pela câmera"
+          >
+            <i class="fa-solid fa-barcode" aria-hidden="true"></i>
+          </button>
           <button type="button" class="livro-autocomplete-clear" aria-label="Limpar livro">
             <i class="fa-solid fa-xmark" aria-hidden="true"></i>
           </button>
         </div>
+        <isbn-scanner class="livro-isbn-scanner"></isbn-scanner>
         <div class="livro-autocomplete-panel" role="listbox" hidden></div>
         <small class="livro-autocomplete-hint" aria-live="polite"></small>
       </div>
@@ -92,6 +103,8 @@ class LivroAutocomplete extends HTMLElement {
 
     const input = this.querySelector("#livro-autocomplete-input");
     const clearBtn = this.querySelector(".livro-autocomplete-clear");
+    const scanBtn = this.querySelector(".livro-autocomplete-scan");
+    const scanner = this.querySelector(".livro-isbn-scanner");
     const panel = this.querySelector(".livro-autocomplete-panel");
     const hint = this.querySelector(".livro-autocomplete-hint");
     const hiddenInput = this.querySelector('#livro[name="livro"]');
@@ -114,6 +127,13 @@ class LivroAutocomplete extends HTMLElement {
 
       input.addEventListener("keydown", (event) => {
         if (this._disabled) return;
+
+        if (event.key === "Enter" && (!panel || panel.hidden)) {
+          const matched = this.selectByIsbn(input.value);
+          if (matched) event.preventDefault();
+          return;
+        }
+
         if (!panel || panel.hidden) return;
 
         const items = Array.from(panel.querySelectorAll("button[data-index]"));
@@ -132,10 +152,46 @@ class LivroAutocomplete extends HTMLElement {
           if (item) {
             event.preventDefault();
             item.click();
+            return;
+          }
+
+          // Scanners físicos/USB costumam finalizar a leitura com Enter.
+          const matched = this.selectByIsbn(input.value);
+          if (matched) {
+            event.preventDefault();
           }
         }
         if (event.key === "Escape") {
           this._closePanel();
+        }
+      });
+    }
+
+    if (scanBtn && scanner) {
+      scanBtn.addEventListener("click", () => {
+        if (this._disabled) return;
+        scanner.open();
+      });
+
+      scanner.addEventListener("isbn-scan", (event) => {
+        const isbn = normalizeIsbn(event.detail?.isbn || "");
+        const matched = this.selectByIsbn(isbn);
+        const hint = this.querySelector(".livro-autocomplete-hint");
+
+        if (!matched && hint) {
+          hint.textContent =
+            "ISBN lido, mas este livro não está cadastrado no acervo.";
+          hint.classList.add("is-error");
+        }
+      });
+
+      scanner.addEventListener("isbn-scan-error", (event) => {
+        const hint = this.querySelector(".livro-autocomplete-hint");
+        if (hint) {
+          hint.textContent =
+            event.detail?.message ||
+            "Não foi possível usar a câmera para ler o ISBN.";
+          hint.classList.add("is-error");
         }
       });
     }
@@ -175,6 +231,7 @@ class LivroAutocomplete extends HTMLElement {
   _syncState() {
     const input = this.querySelector("#livro-autocomplete-input");
     const clearBtn = this.querySelector(".livro-autocomplete-clear");
+    const scanBtn = this.querySelector(".livro-autocomplete-scan");
     const control = this.querySelector(".livro-autocomplete-control");
     const hint = this.querySelector(".livro-autocomplete-hint");
 
@@ -187,6 +244,10 @@ class LivroAutocomplete extends HTMLElement {
 
     if (clearBtn) {
       clearBtn.disabled = this._disabled;
+    }
+
+    if (scanBtn) {
+      scanBtn.disabled = this._disabled;
     }
 
     this._syncActionButton();
@@ -253,6 +314,7 @@ class LivroAutocomplete extends HTMLElement {
 
   _updateHint(query, hint) {
     if (!hint) return;
+    hint.classList.remove("is-error", "is-success");
 
     if (this._disabled) {
       hint.textContent = "Livro selecionado automaticamente a partir da lista.";
@@ -387,6 +449,26 @@ class LivroAutocomplete extends HTMLElement {
 
   _dispatchChange() {
     this.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  selectByIsbn(value) {
+    const isbn = normalizeIsbn(value);
+    if (!isbn) return false;
+
+    const livro = this._livros.find(
+      (item) => normalizeIsbn(item?.isbn) === isbn
+    );
+
+    if (!livro) return false;
+
+    this._selectBook(livro);
+    const hint = this.querySelector(".livro-autocomplete-hint");
+    if (hint) {
+      hint.textContent = `Livro localizado pelo ISBN ${isbn}.`;
+      hint.classList.remove("is-error");
+      hint.classList.add("is-success");
+    }
+    return true;
   }
 
   _findBookById(id) {
