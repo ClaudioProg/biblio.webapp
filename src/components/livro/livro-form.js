@@ -1,5 +1,7 @@
 import "./livro-form.css";
+import "../isbn/isbn-scanner.js";
 import { escapeHtml } from "../../utils/html.js";
+import { normalizeIsbn } from "../../utils/isbn.js";
 
 // Web Component para o formulário de livro
 class LivroForm extends HTMLElement {
@@ -47,12 +49,21 @@ class LivroForm extends HTMLElement {
                         type="button"
                         id="isbn-lookup-trigger"
                         class="isbn-lookup-trigger"
-                        aria-label="Buscar dados do ISBN ao sair do campo"
-                        title="Clique para buscar (ou saia do campo ISBN)">
+                        aria-label="Buscar dados pelo ISBN"
+                        title="Buscar dados pelo ISBN">
                         <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                      </button>
+                      <button
+                        type="button"
+                        id="isbn-scan-trigger"
+                        class="isbn-scan-trigger"
+                        aria-label="Ler ISBN pela câmera"
+                        title="Ler ISBN pela câmera">
+                        <i class="fa-solid fa-barcode" aria-hidden="true"></i>
                       </button>
                     </div>
                   <small id="isbn-feedback" class="isbn-feedback" aria-live="polite"></small>
+                  <small class="isbn-help">Digite o ISBN, use um scanner físico/USB ou leia o código pela câmera.</small>
                 </div>
                 <div>
                     <label for="titulo">Título:</label>
@@ -116,6 +127,7 @@ class LivroForm extends HTMLElement {
                     <button type="button" id="cancelar-btn" class="outline">Cancelar</button>
                     <button type="submit">Salvar Livro</button>
                 </div>
+                <isbn-scanner id="isbn-camera-scanner"></isbn-scanner>
                 <div id="isbn-global-loading" class="isbn-global-loading" hidden>
                   <div class="isbn-global-loading-card">
                     <span class="isbn-global-loading-spinner" aria-hidden="true"></span>
@@ -144,6 +156,8 @@ class LivroForm extends HTMLElement {
       const form = this.querySelector("#livro-form");
       const isbnInput = this.querySelector("#isbn");
       const isbnLookupTrigger = this.querySelector("#isbn-lookup-trigger");
+      const isbnScanTrigger = this.querySelector("#isbn-scan-trigger");
+      const isbnScanner = this.querySelector("#isbn-camera-scanner");
       const isbnInputWrapper = this.querySelector(".isbn-input-wrapper");
       const isbnFeedback = this.querySelector("#isbn-feedback");
       const formFeedback = this.querySelector("#livro-form-feedback");
@@ -252,8 +266,8 @@ class LivroForm extends HTMLElement {
         }
 
         const rawIsbn = String(isbnInput?.value || "").trim();
-        const isbn = rawIsbn.replace(/[^0-9Xx]/g, "");
-        const lookupKey = isbn.toUpperCase();
+        const isbn = normalizeIsbn(rawIsbn);
+        const lookupKey = isbn;
 
         if (isbn.length < 10) {
           setIsbnFeedback("");
@@ -321,7 +335,7 @@ class LivroForm extends HTMLElement {
           if (isbnDebounceTimer) clearTimeout(isbnDebounceTimer);
 
           const rawIsbn = String(isbnInput.value || "").trim();
-          const isbn = rawIsbn.replace(/[^0-9Xx]/g, "");
+          const isbn = normalizeIsbn(rawIsbn);
 
           if (!rawIsbn) {
             setIsbnFeedback("");
@@ -345,6 +359,15 @@ class LivroForm extends HTMLElement {
           if (isbnDebounceTimer) clearTimeout(isbnDebounceTimer);
           buscarPorIsbn("blur");
         });
+
+        // Scanners físicos/USB normalmente digitam o código e enviam Enter.
+        isbnInput.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter") return;
+          event.preventDefault();
+          if (isbnDebounceTimer) clearTimeout(isbnDebounceTimer);
+          isbnInput.value = normalizeIsbn(isbnInput.value);
+          buscarPorIsbn("hardware-scanner");
+        });
       }
 
       if (isbnLookupTrigger && isbnInput) {
@@ -354,6 +377,27 @@ class LivroForm extends HTMLElement {
             return;
           }
           buscarPorIsbn("icon");
+        });
+      }
+
+      if (isbnScanTrigger && isbnScanner && isbnInput) {
+        isbnScanTrigger.addEventListener("click", () => isbnScanner.open());
+
+        isbnScanner.addEventListener("isbn-scan", async (event) => {
+          const isbn = normalizeIsbn(event.detail?.isbn || "");
+          if (!isbn) return;
+
+          isbnInput.value = isbn;
+          lastLookupKey = "";
+          setIsbnFeedback("ISBN lido pela câmera. Buscando dados do livro...", "loading");
+          await buscarPorIsbn("camera-scanner");
+        });
+
+        isbnScanner.addEventListener("isbn-scan-error", (event) => {
+          setIsbnFeedback(
+            event.detail?.message || "Não foi possível usar a câmera para ler o ISBN.",
+            "error"
+          );
         });
       }
 
