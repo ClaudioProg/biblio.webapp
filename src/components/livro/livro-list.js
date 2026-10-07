@@ -82,6 +82,7 @@ class LivroList extends HTMLElement {
                 data-livro-id="${livro.id}"
                 aria-haspopup="true"
                 aria-expanded="false"
+                aria-label="Abrir ações do livro: ${escapeHtml(livro.titulo)}"
                 title="Ações do livro"
               >
                 <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -103,16 +104,14 @@ class LivroList extends HTMLElement {
     this.innerHTML = /* html */ `
       <div class="livro-list-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
         <h2 style="margin:0;">Lista de Livros</h2>
-        <button id="add-livro-btn" class="outline">+ Adicionar Livro</button>
+        <button type="button" id="add-livro-btn" class="outline">+ Adicionar Livro</button>
       </div>
       
       <div class="livro-filter-form" style="margin-bottom:1.5rem;border:1px solid #ddd;border-radius:8px;background:#f9f9f9;">
-        <div style="padding:1rem;border-bottom:1px solid #ddd;background:#f0f0f0;cursor:pointer;user-select:none;" id="filter-toggle">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <h4 style="margin:0;">Filtros de Busca</h4>
-            <span id="filter-arrow" style="font-size:1.2em;">▼</span>
-          </div>
-        </div>
+        <button type="button" style="width:100%;padding:1rem;border:0;border-bottom:1px solid #ddd;background:#f0f0f0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;text-align:left;" id="filter-toggle" aria-expanded="false" aria-controls="filter-content">
+          <span style="font-weight:600;">Filtros de Busca</span>
+          <span id="filter-arrow" aria-hidden="true" style="font-size:1.2em;">▼</span>
+        </button>
         <div id="filter-content" style="padding:1rem;display:none;">
           <form id="livro-filter-form">
             <div class="filter-grid" style="
@@ -230,6 +229,7 @@ class LivroList extends HTMLElement {
       filterToggle.onclick = () => {
         const isVisible = filterContent.style.display !== "none";
         filterContent.style.display = isVisible ? "none" : "block";
+        filterToggle.setAttribute("aria-expanded", String(!isVisible));
         filterArrow.textContent = isVisible ? "▶" : "▼";
       };
     }
