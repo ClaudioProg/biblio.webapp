@@ -61,6 +61,9 @@ export class AuthView {
 
     button.disabled = false;
     button.textContent = "Entrar";
+    if (feedback) {
+      feedback.classList.remove("is-loading");
+    }
   }
 
   showError(message) {
