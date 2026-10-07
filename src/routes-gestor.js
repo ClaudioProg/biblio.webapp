@@ -1,6 +1,6 @@
 export async function gestorRoutes({ gestorController, gestorView, navigate }) {
   const path = window.location.pathname;
-  if (!/^\/(dashboard|livros|unidades|usuarios|emprestimos)/.test(path)) {
+  if (!/^\/(dashboard|livros|unidades|usuarios|emprestimos|acessos)/.test(path)) {
     return false;
   }
   function clearHeader() {
@@ -89,6 +89,17 @@ export async function gestorRoutes({ gestorController, gestorView, navigate }) {
   }
 
   switch (path) {
+    case "/acessos":
+      if (window.authController?.getUser?.()?.role !== "admin") {
+        navigate("/dashboard");
+        return true;
+      }
+      document.body.insertAdjacentHTML(
+        "afterbegin",
+        `<main><app-header></app-header><div id="app-content" class="app-content"></div></main>`
+      );
+      await gestorController.showAcessosPage();
+      return true;
     case "/dashboard":
       document.body.insertAdjacentHTML(
         "afterbegin",

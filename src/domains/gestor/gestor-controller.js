@@ -563,6 +563,69 @@ export class GestorController {
     this.view.renderEmprestimosPage(emprestimos, onAdd, onEdit, onDelete, onFilter);
   }
 
+  async showAcessosPage() {
+    this.view = this.view || new GestorView();
+    this.view.showLoading("Carregando acessos...");
+
+    const root = document.querySelector("#app-content");
+    if (!root) {
+      this.view.hideLoading();
+      return;
+    }
+
+    root.innerHTML = `<acesso-page></acesso-page>`;
+    const page = root.querySelector("acesso-page");
+
+    const refresh = async () => {
+      const response = await this.service.listarAcessos();
+      page.accounts = Array.isArray(response) ? response : [];
+    };
+
+    page.onCreate = async (payload) => {
+      try {
+        await this.service.adicionarAcesso(payload);
+        await refresh();
+      } catch (err) {
+        throw new Error(
+          extractFriendlyError(err, "Não foi possível criar o acesso.")
+        );
+      }
+    };
+
+    page.onUpdate = async (id, payload) => {
+      try {
+        await this.service.atualizarAcesso(id, payload);
+        await refresh();
+      } catch (err) {
+        throw new Error(
+          extractFriendlyError(err, "Não foi possível atualizar o acesso.")
+        );
+      }
+    };
+
+    page.onResetPassword = async (id, password) => {
+      try {
+        await this.service.redefinirSenhaAcesso(id, password);
+      } catch (err) {
+        throw new Error(
+          extractFriendlyError(err, "Não foi possível redefinir a senha.")
+        );
+      }
+    };
+
+    try {
+      await refresh();
+    } catch (err) {
+      console.error("Erro ao carregar acessos:", err);
+      showToast(
+        extractFriendlyError(err, "Não foi possível carregar os acessos."),
+        "error"
+      );
+    } finally {
+      this.view.hideLoading();
+    }
+  }
+
   async showEmprestimoForm(id, onBack = null, options = {}) {
     let emprestimo = null;
     if (id) {

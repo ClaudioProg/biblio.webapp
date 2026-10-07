@@ -1,0 +1,162 @@
+.access-page {
+  display: grid;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.access-page-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.access-page-heading h2,
+.access-page-heading p {
+  margin-top: 0;
+}
+
+.access-page-heading p {
+  max-width: 72rem;
+}
+
+.access-eyebrow {
+  margin: 0 0 .25rem !important;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  opacity: .7;
+}
+
+.access-panel,
+.access-form-panel {
+  background: var(--color-background);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.access-form-panel[hidden] {
+  display: none;
+}
+
+.access-form-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.access-form-title h3 {
+  margin: 0 0 1rem;
+}
+
+.access-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .9rem 1rem;
+}
+
+.access-form-grid label {
+  font-weight: 600;
+}
+
+.access-form-grid input,
+.access-form-grid select {
+  margin-bottom: .2rem;
+}
+
+.access-active-field {
+  display: flex;
+  align-items: center;
+}
+
+.access-active-field label {
+  display: inline-flex;
+  gap: .55rem;
+  align-items: center;
+}
+
+.access-active-field input {
+  width: auto;
+  margin: 0;
+}
+
+.access-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .75rem;
+  margin-top: 1rem;
+}
+
+.access-table {
+  width: 100%;
+}
+
+.access-actions-col {
+  min-width: 240px;
+}
+
+.access-row-actions {
+  display: flex;
+  gap: .4rem;
+  flex-wrap: wrap;
+}
+
+.access-row-actions button {
+  margin: 0;
+  padding: .45rem .65rem;
+  font-size: .85rem;
+}
+
+.access-status {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: .2rem .6rem;
+  font-size: .82rem;
+  font-weight: 600;
+}
+
+.access-status.is-active {
+  background: rgba(34, 197, 94, .12);
+}
+
+.access-status.is-inactive {
+  background: rgba(148, 163, 184, .18);
+  opacity: .8;
+}
+
+.access-empty {
+  text-align: center;
+  opacity: .7;
+}
+
+.access-password-dialog {
+  width: min(92vw, 520px);
+  border: 0;
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.access-password-dialog::backdrop {
+  background: rgba(15, 23, 42, .58);
+}
+
+.access-password-dialog h3 {
+  margin-top: 0;
+}
+
+@media (max-width: 760px) {
+  .access-page-heading {
+    display: grid;
+  }
+
+  .access-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .access-page-heading > button {
+    width: 100%;
+  }
+}

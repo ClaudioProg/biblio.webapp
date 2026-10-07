@@ -1,4 +1,5 @@
 import "./app-header.css";
+import { isAdminUser } from "../utils/access.js";
 
 // ADICIONADO: helper de navegação com fallback
 function go(path) {
@@ -17,7 +18,10 @@ class AppHeader extends HTMLElement {
     const isUnidades = path.startsWith("/unidades");
     const isUsuarios = path.startsWith("/usuarios");
     const isEmprestimos = path.startsWith("/emprestimos");
+    const isAcessos = path.startsWith("/acessos");
     const isFaq = path.startsWith("/faq");
+    const currentUser = window.authController?.getUser?.() || null;
+    const canManageAccess = isAdminUser(currentUser);
     
     this.innerHTML = /* html */ `
       <header id="main-header" class="header">
@@ -70,6 +74,14 @@ class AppHeader extends HTMLElement {
               <span>Empréstimos</span>
             </a>
           </li>
+          ${canManageAccess ? `
+          <li>
+            <a href="#" id="menu-acessos-btn" class="side-menu-item ${isAcessos ? 'active' : ''}">
+              <i class="fa-solid fa-user-shield"></i>
+              <span>Acessos</span>
+            </a>
+          </li>
+          ` : ""}
           <li>
             <a href="#" id="menu-faq-btn" class="side-menu-item ${isFaq ? 'active' : ''}">
               <i class="fa-solid fa-circle-question"></i>
@@ -161,6 +173,15 @@ class AppHeader extends HTMLElement {
       window.navigate && window.navigate("/emprestimos");
     };
     
+    const acessosBtn = this.querySelector("#menu-acessos-btn");
+    if (acessosBtn) {
+      acessosBtn.onclick = (e) => {
+        e.preventDefault();
+        closeMenu();
+        go("/acessos");
+      };
+    }
+
     this.querySelector("#menu-faq-btn").onclick = (e) => {
       e.preventDefault();
       closeMenu();
