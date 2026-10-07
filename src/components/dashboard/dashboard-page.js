@@ -115,9 +115,10 @@ class DashboardPage extends HTMLElement {
         <article class="dashboard-panel">
           <h3>Acervo e circulação por unidade</h3>
           ${this._simpleTable(
-            ["Unidade", "Títulos", "Exemplares", "Empréstimos", "Abertos", "Devolvidos"],
+            ["Unidade", "Bairro IBGE", "Títulos", "Exemplares", "Empréstimos", "Abertos", "Devolvidos"],
             porUnidade.map((row) => [
               escapeHtml(row.unidade || "Não informada"),
+              escapeHtml(row.ibge_bairro_nome || "—"),
               formatNullableNumber(row.titulos),
               formatNullableNumber(row.exemplares),
               formatNullableNumber(row.emprestimos_total),
