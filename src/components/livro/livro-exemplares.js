@@ -1,6 +1,7 @@
 // 📄 src/components/livro/livro-exemplares.js
 import { BaseService } from "../../domains/base-service.js";
 import { showToast } from "../../utils/feedback.js";
+import { escapeHtml } from "../../utils/html.js";
 
 const api = new BaseService();
 
@@ -139,7 +140,7 @@ class LivroExemplaresPage extends HTMLElement {
         <page-header title="Exemplares por Unidade" back-button-id="voltar-btn"></page-header>
 
         <div style="margin:8px 0 16px 0;color:#555">
-          <div><strong>Livro:</strong> ${livro.titulo || "—"}</div>
+          <div><strong>Livro:</strong> ${escapeHtml(livro.titulo || "—")}</div>
           <div><strong>Total de exemplares:</strong> <span id="total-exemplares">${this.totalExemplares()}</span></div>
         </div>
 
@@ -152,10 +153,10 @@ class LivroExemplaresPage extends HTMLElement {
                       (unidade) => `
                         <label style="display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:12px;align-items:center;border:1px solid #eee;border-radius:12px;padding:12px 14px">
                           <span>
-                            <strong>${unidade.nome}</strong>
+                            <strong>${escapeHtml(unidade.nome)}</strong>
                             ${
                               unidade.endereco
-                                ? `<small style="display:block;color:#666">${unidade.endereco}</small>`
+                                ? `<small style="display:block;color:#666">${escapeHtml(unidade.endereco)}</small>`
                                 : ""
                             }
                           </span>
@@ -166,7 +167,7 @@ class LivroExemplaresPage extends HTMLElement {
                             step="1"
                             data-unidade-id="${unidade.id}"
                             value="${this.getQuantidade(unidade.id)}"
-                            aria-label="Exemplares em ${unidade.nome}"
+                            aria-label="Exemplares em ${escapeHtml(unidade.nome)}"
                           />
                         </label>
                       `
