@@ -447,19 +447,15 @@ class LivroForm extends HTMLElement {
           formFeedback.textContent = "";
           formFeedback.classList.remove("is-error", "is-success", "is-loading");
         }
-        // Adiciona as unidades selecionadas ao form para o controller
-        if (form._livroUnidades && form._livroUnidades.length > 0) {
-          form._unidadesPayload = form._livroUnidades.map((u) => ({
-            unidade: u.unidade.id,
-            exemplares: u.exemplares,
-          }));
-        } else {
-          form._unidadesPayload = [
-            { unidade: unidades[0]?.id || 1, exemplares: 1 },
-          ];
-        }
-        // Tipo de obra selecionado
-        form._tipoObraValue = form.querySelector('[name="tipo_obra"]')?.value || null;
+        // Mantém no próprio Web Component o estado que será enviado pelo GestorView.
+        // Antes este trecho gravava no <form> interno, mas o submit externo lia o
+        // estado do <livro-form>, fazendo as alterações de unidades/exemplares se perderem.
+        this._unidadesPayload = (this._livroUnidades || []).map((u) => ({
+          unidade: u.unidade.id,
+          exemplares: Number(u.exemplares) || 0,
+        }));
+        this._tipoObraValue =
+          form.querySelector('[name="tipo_obra"]')?.value || null;
       });
       // Preencher campos do formulário ao editar
       if (isEdit && this._livroSelecionado) {
