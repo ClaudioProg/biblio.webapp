@@ -550,7 +550,7 @@ export class GestorController {
     try {
       const [livrosResp, usuariosResp, unidadesResp] = await Promise.all([
         this.service.listarLivros(),
-        this.service.listarUsuarios(),
+        id ? this.service.listarUsuarios() : this.service.listarUsuarios({ ativo: true }),
         this.service.listarUnidades(),
       ]);
       livros = Array.isArray(livrosResp) ? livrosResp : [];
