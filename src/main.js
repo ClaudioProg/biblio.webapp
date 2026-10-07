@@ -10,6 +10,7 @@ import "./components/usuario/usuario-list.js";
 import "./components/emprestimo/emprestimo-form.js";
 import "./components/emprestimo/emprestimo-list.js";
 import "./components/app-header.js";
+import "./components/dashboard/dashboard-page.js";
 import { router as appRouter } from "./routes.js";
 import { GestorController } from "./domains/gestor/gestor-controller.js";
 import { AuthController } from "./domains/auth/auth-controller.js";
