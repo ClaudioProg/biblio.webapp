@@ -7,6 +7,7 @@ import {
   validateUnidadeFormData,
 } from "../../utils/form-validation.js";
 import { showToast } from "../../utils/feedback.js";
+import { escapeHtml } from "../../utils/html.js";
 
 export class GestorView {
   showLoading(message = "Carregando...") {
@@ -126,7 +127,7 @@ export class GestorView {
           <select id="genero" name="genero" required>
             <option value="">Selecione o gênero</option>
             ${generos
-              .map((g) => `<option value="${g.id}">${g.nome}</option>`)
+              .map((g) => `<option value="${g.id}">${escapeHtml(g.nome)}</option>`)
               .join("")}
           </select>
         `;
@@ -142,7 +143,7 @@ export class GestorView {
         <select id="genero" name="genero" required>
           <option value="">Selecione o gênero</option>
           ${generos
-            .map((g) => `<option value="${g.id}">${g.nome}</option>`)
+            .map((g) => `<option value="${g.id}">${escapeHtml(g.nome)}</option>`)
             .join("")}
         </select>
       `;
@@ -170,7 +171,7 @@ export class GestorView {
           <select id="tipo_obra" name="tipo_obra">
             <option value="">Selecione o tipo de obra</option>
             ${tipo_obras
-              .map((t) => `<option value="${t.id}">${t.nome}</option>`)
+              .map((t) => `<option value="${t.id}">${escapeHtml(t.nome)}</option>`)
               .join("")}
           </select>
         `;
@@ -415,15 +416,15 @@ export class GestorView {
       <div class="livro-detalhe-container">
         <h2><button type="button" id="voltar-btn" class="outline border-0"><i class="fa-solid fa-arrow-left"></i></button> Detalhes do Livro</h2>
         <div>
-          <div><b>Título:</b> ${livro.titulo}</div>
-          <div><b>Autor:</b> ${livro.autor}</div>
-          <div><b>Editora:</b> ${livro.editora || "-"}</div>
-          <div><b>Data de Publicação:</b> ${livro.data_publicacao || "-"}</div>
-          <div><b>ISBN:</b> ${livro.isbn || "-"}</div>
-          <div><b>Páginas:</b> ${livro.paginas || "-"}</div>
-          <div><b>Idioma:</b> ${livro.idioma || "-"}</div>
-          <div><b>Gênero:</b> ${generoNome}</div>
-          <div><b>Tipo de Obra:</b> ${tipoObraNome}</div>
+          <div><b>Título:</b> ${escapeHtml(livro.titulo)}</div>
+          <div><b>Autor:</b> ${escapeHtml(livro.autor)}</div>
+          <div><b>Editora:</b> ${escapeHtml(livro.editora || "-")}</div>
+          <div><b>Data de Publicação:</b> ${escapeHtml(livro.data_publicacao || "-")}</div>
+          <div><b>ISBN:</b> ${escapeHtml(livro.isbn || "-")}</div>
+          <div><b>Páginas:</b> ${escapeHtml(livro.paginas || "-")}</div>
+          <div><b>Idioma:</b> ${escapeHtml(livro.idioma || "-")}</div>
+          <div><b>Gênero:</b> ${escapeHtml(generoNome)}</div>
+          <div><b>Tipo de Obra:</b> ${escapeHtml(tipoObraNome)}</div>
         </div>
         <hr/>
         <h6>Unidades</h6>
@@ -432,7 +433,7 @@ export class GestorView {
             unidades
               .map((u) => {
                 const unidade = u.unidade || {};
-                return `<li><strong>${unidade.nome || "Unidade"}:</strong> ${Number(u.exemplares) || 0} exemplar(es)</li>`;
+                return `<li><strong>${escapeHtml(unidade.nome || "Unidade")}:</strong> ${Number(u.exemplares) || 0} exemplar(es)</li>`;
               })
               .join("") || "<li>Nenhuma unidade cadastrada.</li>"
           }
@@ -449,12 +450,12 @@ export class GestorView {
       <div class="form-container">
         <div class="unidade-detalhe-header">
           <button id="voltar-unidade-detalhe" class="outline border-0"><i class="fa-solid fa-arrow-left"></i></button>
-          <h2>${unidade.nome}</h2>
+          <h2>${escapeHtml(unidade.nome)}</h2>
         </div>
-        <p><strong>Endereço:</strong> ${unidade.endereco}</p>
-        <p><strong>Telefone:</strong> ${unidade.telefone || "-"}</p>
-        <p><strong>Email:</strong> ${unidade.email || "-"}</p>
-        <p><strong>Site:</strong> ${unidade.site || "-"}</p>
+        <p><strong>Endereço:</strong> ${escapeHtml(unidade.endereco || "")}</p>
+        <p><strong>Telefone:</strong> ${escapeHtml(unidade.telefone || "-")}</p>
+        <p><strong>Email:</strong> ${escapeHtml(unidade.email || "-")}</p>
+        <p><strong>Site:</strong> ${escapeHtml(unidade.site || "-")}</p>
       </div>
     `;
     document.getElementById("voltar-unidade-detalhe").onclick = () =>
@@ -507,7 +508,7 @@ export class GestorView {
           (u) => `
         <div class="exemplares-unidade">
           <input id="exemplares-unidade-${u.unidade.id}" type="number" min="0" value="${u.exemplares}" data-id="${u.unidade.id}">
-          <label for="exemplares-unidade-${u.unidade.id}">${u.unidade.nome}</label>
+          <label for="exemplares-unidade-${u.unidade.id}">${escapeHtml(u.unidade.nome)}</label>
         </div>
       `
         )
