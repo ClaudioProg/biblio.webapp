@@ -44,7 +44,7 @@ class LivroForm extends HTMLElement {
                 <div>
                     <label for="isbn">ISBN:</label>
                     <div class="isbn-input-wrapper" data-loading="false">
-                      <input type="text" id="isbn" name="isbn" maxlength="13" inputmode="numeric" pattern="(?:\d{10}|\d{13}|\d{9}[\dXx])">
+                      <input type="text" id="isbn" name="isbn" maxlength="13" inputmode="numeric" pattern="(?:[0-9]{10}|[0-9]{13}|[0-9]{9}[0-9Xx])">
                       <button
                         type="button"
                         id="isbn-lookup-trigger"
