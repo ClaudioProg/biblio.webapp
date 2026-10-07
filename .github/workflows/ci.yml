@@ -28,6 +28,9 @@ jobs:
         run: |
           if npm run | grep -q "test"; then npm test; else echo "sem script test"; fi
 
+      - name: Security audit
+        run: npm audit --audit-level=high
+
       - name: Build
         run: |
           if npm run | grep -q "build"; then npm run build; else echo "sem script build"; fi
