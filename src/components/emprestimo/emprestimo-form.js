@@ -2,6 +2,7 @@ import "./emprestimo-form.css";
 import "./livro-autocomplete.js";
 import { validateEmprestimoFormData } from "../../utils/form-validation.js";
 import { showToast } from "../../utils/feedback.js";
+import { escapeHtml } from "../../utils/html.js";
 
 class EmprestimoForm extends HTMLElement {
   connectedCallback() {
@@ -117,7 +118,7 @@ class EmprestimoForm extends HTMLElement {
     const selectedUsuarioAtual = usuarioSelect.value;
     usuarioSelect.innerHTML = `
       <option value="">Selecione um usuário</option>
-      ${usuarios.map((usuario) => `<option value="${usuario.id}">${usuario.nome}</option>`).join("")}
+      ${usuarios.map((usuario) => `<option value="${usuario.id}">${escapeHtml(usuario.nome)}</option>`).join("")}
     `;
     // Restaurar seleção anterior se ainda existir
     if (selectedUsuarioAtual) {
@@ -155,7 +156,7 @@ class EmprestimoForm extends HTMLElement {
         const suffix = selectedLivroId && Number.isFinite(disponiveis)
           ? ` — ${disponiveis} disponível(is)`
           : "";
-        return `<option value="${unidade.id}">${unidade.nome}${suffix}</option>`;
+        return `<option value="${unidade.id}">${escapeHtml(unidade.nome)}${escapeHtml(suffix)}</option>`;
       }).join("")}
     `;
     if (selectedUnidadeAtual) {
