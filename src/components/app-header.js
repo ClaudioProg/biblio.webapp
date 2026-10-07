@@ -152,8 +152,14 @@ class AppHeader extends HTMLElement {
       e.preventDefault();
       closeMenu();
       if (window.confirm("Deseja realmente sair do sistema?")) {
-        localStorage.removeItem("isAuthenticated");
-        window.navigate && window.navigate("/login");
+        if (window.authController?.logout) {
+          window.authController.logout();
+        } else {
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("isAuthenticated");
+          localStorage.removeItem("user");
+        }
+        go("/login");
       }
     };
   }
