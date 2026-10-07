@@ -33,7 +33,7 @@ class AppHeader extends HTMLElement {
       
       <div class="menu-overlay" id="menu-overlay"></div>
       
-      <nav class="side-menu" id="side-menu" aria-label="Navegação principal" aria-hidden="true">
+      <nav class="side-menu" id="side-menu" aria-label="Navegação principal" aria-hidden="true" inert>
         <div class="side-menu-header">
           <h3>Menu</h3>
           <button type="button" class="close-menu-btn" id="close-menu-btn" aria-label="Fechar menu">
@@ -103,6 +103,7 @@ class AppHeader extends HTMLElement {
     const openMenu = () => {
       sideMenu.classList.add("open");
       menuOverlay.classList.add("open");
+      sideMenu.removeAttribute("inert");
       sideMenu.setAttribute("aria-hidden", "false");
       hamburgerBtn.setAttribute("aria-expanded", "true");
       document.body.style.overflow = "hidden";
@@ -112,6 +113,7 @@ class AppHeader extends HTMLElement {
     const closeMenu = ({ restoreFocus = true } = {}) => {
       sideMenu.classList.remove("open");
       menuOverlay.classList.remove("open");
+      sideMenu.setAttribute("inert", "");
       sideMenu.setAttribute("aria-hidden", "true");
       hamburgerBtn.setAttribute("aria-expanded", "false");
       document.body.style.overflow = "";
