@@ -129,19 +129,34 @@ class EmprestimoForm extends HTMLElement {
     const unidadesDetalhe = Array.isArray(livroSelecionado?.unidades_detalhe)
       ? livroSelecionado.unidades_detalhe
       : [];
-    const unidadeIdsComExemplares = unidadesDetalhe
-      .filter((ud) => Number(ud.exemplares || 0) > 0)
-      .map((ud) => Number(ud.unidade?.id));
+    const disponibilidadePorUnidade = new Map(
+      unidadesDetalhe.map((ud) => [
+        Number(ud.unidade?.id),
+        Number(
+          ud.exemplares_disponiveis ??
+          ud.exemplares ??
+          0
+        ),
+      ])
+    );
 
     let unidadesDisponiveis = unidades;
-    if (selectedLivroId && unidadeIdsComExemplares.length > 0) {
-      unidadesDisponiveis = unidades.filter((u) => unidadeIdsComExemplares.includes(Number(u.id)));
+    if (selectedLivroId) {
+      unidadesDisponiveis = unidades.filter(
+        (u) => (disponibilidadePorUnidade.get(Number(u.id)) || 0) > 0
+      );
     }
 
     const selectedUnidadeAtual = unidadeSelect.value;
     unidadeSelect.innerHTML = `
-      <option value="">Selecione uma unidade</option>
-      ${unidadesDisponiveis.map((unidade) => `<option value="${unidade.id}">${unidade.nome}</option>`).join("")}
+      <option value="">${selectedLivroId && unidadesDisponiveis.length === 0 ? "Sem exemplares disponíveis" : "Selecione uma unidade"}</option>
+      ${unidadesDisponiveis.map((unidade) => {
+        const disponiveis = disponibilidadePorUnidade.get(Number(unidade.id));
+        const suffix = selectedLivroId && Number.isFinite(disponiveis)
+          ? ` — ${disponiveis} disponível(is)`
+          : "";
+        return `<option value="${unidade.id}">${unidade.nome}${suffix}</option>`;
+      }).join("")}
     `;
     if (selectedUnidadeAtual) {
       unidadeSelect.value = selectedUnidadeAtual;
@@ -154,13 +169,17 @@ class EmprestimoForm extends HTMLElement {
     if (!form) return;
     if (!this._emprestimo) {
       if (!form.data_emprestimo.value) {
-        const today = new Date().toISOString().slice(0, 10);
+        const todayDate = new Date();
+        const today = this._formatLocalDate(todayDate);
         form.data_emprestimo.value = today;
-        // Calcular data prevista de devolução (14 dias após data de empréstimo)
+
         if (!form.data_prevista_devolucao.value) {
-          const dueDate = new Date(today);
-          dueDate.setDate(dueDate.getDate() + 14);
-          form.data_prevista_devolucao.value = dueDate.toISOString().slice(0, 10);
+          const dueDate = new Date(
+            todayDate.getFullYear(),
+            todayDate.getMonth(),
+            todayDate.getDate() + 14
+          );
+          form.data_prevista_devolucao.value = this._formatLocalDate(dueDate);
         }
       }
       if (!form.status.value) form.status.value = "aberto";
@@ -180,6 +199,19 @@ class EmprestimoForm extends HTMLElement {
     form.status.value = this._emprestimo.status || "aberto";
     form.data_devolucao.value = this._emprestimo.data_devolucao || "";
     form.observacoes.value = this._emprestimo.observacoes || "";
+  }
+
+  _formatLocalDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  _dateFromInput(value) {
+    const [year, month, day] = String(value || "").split("-").map(Number);
+    if (!year || !month || !day) return null;
+    return new Date(year, month - 1, day);
   }
 
   _applyLivroPrefillIfNeeded(form) {
@@ -217,11 +249,12 @@ class EmprestimoForm extends HTMLElement {
     if (dataEmprestimoInput) {
       dataEmprestimoInput.addEventListener("change", (e) => {
         const selectedDate = e.target.value;
-        if (selectedDate && !dataPrevistaInput.value) {
-          // Calcular 14 dias após a data selecionada
-          const dueDate = new Date(selectedDate + "T00:00:00Z");
-          dueDate.setDate(dueDate.getDate() + 14);
-          dataPrevistaInput.value = dueDate.toISOString().slice(0, 10);
+        if (selectedDate) {
+          const baseDate = this._dateFromInput(selectedDate);
+          if (baseDate) {
+            baseDate.setDate(baseDate.getDate() + 14);
+            dataPrevistaInput.value = this._formatLocalDate(baseDate);
+          }
         }
       });
     }
