@@ -16,6 +16,8 @@ test("normalizes ISBN punctuation and spaces", () => {
 
 test("validates ISBN-10 checksum", () => {
   assert.equal(isValidIsbn10("0306406152"), true);
+  assert.equal(isValidIsbn10("080442957X"), true);
+  assert.equal(normalizeIsbn("0-8044-2957-X"), "080442957X");
   assert.equal(isValidIsbn10("0306406153"), false);
 });
 
