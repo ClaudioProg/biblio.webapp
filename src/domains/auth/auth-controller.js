@@ -36,6 +36,21 @@ export class AuthController {
     return true;
   }
 
+  async changePassword(currentPassword, newPassword) {
+    const response = await this.api.post("gestor/auth/change-password/", {
+      current_password: String(currentPassword || ""),
+      new_password: String(newPassword || ""),
+    });
+
+    if (response?.token) {
+      this.token = response.token;
+      localStorage.setItem("authToken", response.token);
+      localStorage.setItem("isAuthenticated", "true");
+    }
+
+    return response;
+  }
+
   logout() {
     const token = this.getToken();
 
