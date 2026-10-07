@@ -205,7 +205,12 @@ export class GestorView {
         idioma: livroFormEl.querySelector('input[name="idioma"]')?.value || livroFormEl.idioma?.value,
         genero: livroFormEl.querySelector('select[name="genero"]')?.value,
         tipo_obra: livroFormEl.querySelector('select[name="tipo_obra"]')?.value,
-        unidades: livroFormEl._unidadesSelecionadas || [] 
+        unidades:
+          livroFormEl._unidadesPayload ||
+          (livroFormEl._livroUnidades || []).map((u) => ({
+            unidade: typeof u.unidade === "object" ? u.unidade.id : u.unidade,
+            exemplares: Number(u.exemplares) || 0,
+          }))
       };
 
       const validation = validateLivroFormData(formData);
@@ -390,8 +395,22 @@ export class GestorView {
     emprestimoForm.onBack = onBack;
   }
 
-  renderLivroDetalhe(livro) {
+  renderLivroDetalhe(livro, initData = {}) {
     this.hideLoading();
+
+    const unidades = Array.isArray(livro?.unidades_detalhe)
+      ? livro.unidades_detalhe
+      : Array.isArray(livro?.unidades)
+        ? livro.unidades
+        : [];
+
+    const generoNome =
+      (initData.generos || []).find((g) => Number(g.id) === Number(livro?.genero))?.nome ||
+      "-";
+    const tipoObraNome =
+      (initData.tipo_obras || []).find((t) => Number(t.id) === Number(livro?.tipo_obra))?.nome ||
+      "-";
+
     document.querySelector("#app-content").innerHTML = `
       <div class="livro-detalhe-container">
         <h2><button type="button" id="voltar-btn" class="outline border-0"><i class="fa-solid fa-arrow-left"></i></button> Detalhes do Livro</h2>
@@ -403,22 +422,18 @@ export class GestorView {
           <div><b>ISBN:</b> ${livro.isbn || "-"}</div>
           <div><b>Páginas:</b> ${livro.paginas || "-"}</div>
           <div><b>Idioma:</b> ${livro.idioma || "-"}</div>
-          <div><b>Gênero:</b> ${
-            livro.generoObj && livro.generoObj.nome ? livro.generoObj.nome : "-"
-          }</div>
-          <div><b>Tipo de Obra:</b> ${
-            livro.tipo_obraObj && livro.tipo_obraObj.nome ? livro.tipo_obraObj.nome : "-"
-          }</div>
+          <div><b>Gênero:</b> ${generoNome}</div>
+          <div><b>Tipo de Obra:</b> ${tipoObraNome}</div>
         </div>
         <hr/>
         <h6>Unidades</h6>
         <ul>
           ${
-            (livro.unidades || [])
-              .map(
-                (u) =>
-                  `<li><strong>${u.unidade.nome}:</strong> ${u.exemplares} exemplar(es)</li>`
-              )
+            unidades
+              .map((u) => {
+                const unidade = u.unidade || {};
+                return `<li><strong>${unidade.nome || "Unidade"}:</strong> ${Number(u.exemplares) || 0} exemplar(es)</li>`;
+              })
               .join("") || "<li>Nenhuma unidade cadastrada.</li>"
           }
         </ul>
