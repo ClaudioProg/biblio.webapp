@@ -55,8 +55,15 @@ export class GestorController {
     this.view.showLoading("Carregando indicadores...");
 
     try {
-      const analytics = await this.service.obterAnalyticsResumo();
-      this.view.renderDashboard(analytics || {});
+      const [operacional, territorio] = await Promise.all([
+        this.service.obterAnalyticsResumo(),
+        this.service.obterAnalyticsTerritorio(),
+      ]);
+
+      this.view.renderDashboard({
+        operacional: operacional || {},
+        territorio: territorio || {},
+      });
     } catch (err) {
       console.error("Erro ao carregar dashboard:", err);
       this.view.hideLoading();

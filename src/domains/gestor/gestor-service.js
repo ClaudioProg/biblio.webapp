@@ -2,6 +2,7 @@
 // Lógica de negócio relacionada ao gestor
 import { Livro, Unidade, Usuario, Emprestimo } from "./gestor-model.js";
 import { BaseService } from "../base-service.js";
+import { normalizeIsbn } from "../../utils/isbn.js";
 
 export class GestorService extends BaseService {
   constructor() {
@@ -10,6 +11,15 @@ export class GestorService extends BaseService {
 
   async obterAnalyticsResumo() {
     return this.get("gestor/analytics/resumo/");
+  }
+
+  async obterAnalyticsTerritorio(filters = {}) {
+    const query = new URLSearchParams();
+    if (filters.codigo) query.set("codigo", String(filters.codigo));
+    if (filters.bairro) query.set("bairro", String(filters.bairro));
+
+    const suffix = query.toString() ? `?${query.toString()}` : "";
+    return this.get(`gestor/analytics/territorio/${suffix}`);
   }
 
   // CRUD de Livros
@@ -38,17 +48,17 @@ export class GestorService extends BaseService {
     return this.get(url);
   }
 
- async lookupLivroPorIsbn(isbn) {
-  const normalized = String(isbn || "").replace(/\D/g, "");
+  async lookupLivroPorIsbn(isbn) {
+    const normalized = normalizeIsbn(isbn);
 
-  if (!normalized) {
-    throw new Error("Informe um ISBN para consulta.");
+    if (!normalized) {
+      throw new Error("Informe um ISBN para consulta.");
+    }
+
+    return this.get(
+      `gestor/livros/isbn-lookup/?isbn=${encodeURIComponent(normalized)}`
+    );
   }
-
-  return this.get(
-    `gestor/livros/isbn-lookup/?isbn=${encodeURIComponent(normalized)}`
-  );
-}
 
   getObjectWithPropId(nomePropriedade, livroData) {
     return {
@@ -95,14 +105,7 @@ export class GestorService extends BaseService {
   }
 
   async removerLivro(livroId) {
-    const response = await fetch(this.baseUrl + `gestor/livros/${livroId}/`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    });
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(error || `Erro ${response.status}`);
-    }
+    await this.delete(`gestor/livros/${livroId}/`);
     return true;
   }
 
@@ -188,14 +191,7 @@ export class GestorService extends BaseService {
   }
 
   async removerUsuario(usuarioId) {
-    const response = await fetch(this.baseUrl + `gestor/usuarios/${usuarioId}/`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    });
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(error || `Erro ${response.status}`);
-    }
+    await this.delete(`gestor/usuarios/${usuarioId}/`);
     return true;
   }
 
@@ -242,14 +238,7 @@ export class GestorService extends BaseService {
   }
 
   async removerEmprestimo(emprestimoId) {
-    const response = await fetch(this.baseUrl + `gestor/emprestimos/${emprestimoId}/`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    });
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(error || `Erro ${response.status}`);
-    }
+    await this.delete(`gestor/emprestimos/${emprestimoId}/`);
     return true;
   }
 }
