@@ -359,6 +359,18 @@ export class GestorController {
   async showUnidadeForm(id, onBack = null) {
     const unidade = id ? await this.service.getUnidadeById(id) : null;
 
+    let bairros = [];
+    try {
+      const territorio = await this.service.obterAnalyticsTerritorio();
+      bairros = Array.isArray(territorio?.bairros) ? territorio.bairros : [];
+    } catch (err) {
+      console.error("Erro ao carregar bairros IBGE:", err);
+      showToast(
+        "Não foi possível carregar os bairros do IBGE. O cadastro pode continuar sem vínculo territorial.",
+        "warning"
+      );
+    }
+
     this.view = this.view || new GestorView();
     this.view.renderUnidadeForm(
       async (unidadeData) => {
@@ -377,7 +389,8 @@ export class GestorController {
         }
       },
       unidade,
-      onBack || (() => navigate("/unidades"))
+      onBack || (() => navigate("/unidades")),
+      bairros
     );
   }
 
