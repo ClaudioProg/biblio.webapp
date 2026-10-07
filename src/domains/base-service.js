@@ -60,7 +60,7 @@ export class BaseService {
     };
 
     if (token) {
-      finalHeaders["Authorization"] = `Bearer ${token}`;
+      finalHeaders["Authorization"] = `Token ${token}`;
     }
 
     const url = this.buildUrl(endpoint);
@@ -83,9 +83,11 @@ export class BaseService {
 
         clearTimeout(timerId);
 
-        // Tratamento de autenticação inválida ou expirada
-        if (res.status === 401) {
-          console.warn("Token inválido ou expirado - redirecionando para login");
+        // Em chamadas autenticadas, 401 encerra a sessão local.
+        // No endpoint de login, deixa o tratamento normal extrair a mensagem da API.
+        const isLoginRequest = /\/gestor\/auth\/login\/?$/i.test(url);
+        if (res.status === 401 && !isLoginRequest) {
+          console.warn("Token inválido - redirecionando para login");
           localStorage.removeItem("authToken");
           localStorage.removeItem("isAuthenticated");
           localStorage.removeItem("user");
@@ -94,7 +96,7 @@ export class BaseService {
             window.navigate("/login");
           }
 
-          throw new Error("Sessão expirada. Faça login novamente.");
+          throw new Error("Sessão inválida. Faça login novamente.");
         }
 
         if (res.status === 204) return {};
