@@ -1,4 +1,5 @@
 import "./usuario-list.css";
+import { escapeHtml } from "../../utils/html.js";
 
 class UsuarioList extends HTMLElement {
   constructor() {
@@ -106,9 +107,9 @@ class UsuarioList extends HTMLElement {
                       .map(
                         (usuario) => /* html */ `
                 <tr>
-                  <td>${usuario.nome}</td>
-                  <td>${usuario.email || ""}</td>
-                  <td>${usuario.documento || "-"}</td>
+                  <td>${escapeHtml(usuario.nome)}</td>
+                  <td>${escapeHtml(usuario.email || "")}</td>
+                  <td>${escapeHtml(usuario.documento || "-")}</td>
                   <td>${usuario.ativo ? "Ativo" : "Inativo"}</td>
                   <td>
                     <div class="list-actions usuarios-list-actions">
