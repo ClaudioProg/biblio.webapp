@@ -1,4 +1,5 @@
 import "./livro-form.css";
+import { escapeHtml } from "../../utils/html.js";
 
 // Web Component para o formulário de livro
 class LivroForm extends HTMLElement {
@@ -90,7 +91,7 @@ class LivroForm extends HTMLElement {
           <select id="tipo_obra" name="tipo_obra">
             <option value="">Selecione o tipo de obra</option>
             ${tipoObras
-            .map((t) => `<option value="${t.id}">${t.nome}</option>`)
+            .map((t) => `<option value="${t.id}">${escapeHtml(t.nome)}</option>`)
             .join("")}
           </select>
         </div>
@@ -100,7 +101,7 @@ class LivroForm extends HTMLElement {
                   <select id="unidade-select">
                     <option value="">Selecione a unidade</option>
                     ${unidades
-                      .map((u) => `<option value="${u.id}">${u.nome}</option>`)
+                      .map((u) => `<option value="${u.id}">${escapeHtml(u.nome)}</option>`)
                       .join("")}
                   </select>
                     </div>
@@ -373,7 +374,7 @@ class LivroForm extends HTMLElement {
               this._livroUnidades
                 .map(
                   (u) =>
-                    `<li><strong>${u.unidade.nome}:</strong> ${u.exemplares} exemplar(es) <button type='button' class='remove-unidade-livro outline' data-id='${u.unidade.id}'>Remover</button></li>`
+                    `<li><strong>${escapeHtml(u.unidade.nome)}:</strong> ${u.exemplares} exemplar(es) <button type='button' class='remove-unidade-livro outline' data-id='${u.unidade.id}'>Remover</button></li>`
                 )
                 .join("") +
               `</ul>`
