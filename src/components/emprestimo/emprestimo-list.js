@@ -51,16 +51,14 @@ class EmprestimoList extends HTMLElement {
             <h2 style="margin:0;">Empréstimos</h2>
             <p style="margin:0.35rem 0 0 0;max-width:52rem;opacity:0.85;">Relacione livros com usuários e acompanhe o status de devolução.</p>
           </div>
-          <button id="add-emprestimo-btn" class="outline">+ Novo Empréstimo</button>
+          <button type="button" id="add-emprestimo-btn" class="outline">+ Novo Empréstimo</button>
         </div>
 
         <div style="margin-bottom:1.5rem;border:1px solid #ddd;border-radius:8px;background:#f9f9f9;">
-          <div style="padding:1rem;border-bottom:1px solid #ddd;background:#f0f0f0;cursor:pointer;user-select:none;" id="filter-toggle">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <h4 style="margin:0;">Filtros de Busca</h4>
-              <span id="filter-arrow" style="font-size:1.2em;">▼</span>
-            </div>
-          </div>
+          <button type="button" style="width:100%;padding:1rem;border:0;border-bottom:1px solid #ddd;background:#f0f0f0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;text-align:left;" id="filter-toggle" aria-expanded="false" aria-controls="filter-content">
+            <span style="font-weight:600;">Filtros de Busca</span>
+            <span id="filter-arrow" aria-hidden="true" style="font-size:1.2em;">▼</span>
+          </button>
           <div id="filter-content" style="padding:1rem;display:none;">
             <form id="emprestimo-filter-form">
               <div class="emprestimo-filter-grid">
@@ -117,7 +115,7 @@ class EmprestimoList extends HTMLElement {
                   </td>
                   <td>
                     <div class="list-actions">
-                      <button class="edit-emprestimo-icon outline border-0" data-id="${item.id}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+                      <button type="button" class="edit-emprestimo-icon outline border-0" data-id="${item.id}" title="Editar" aria-label="Editar empréstimo de ${escapeHtml(item.livro_titulo || "livro")}"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>
                     </div>
                   </td>
                 </tr>
@@ -155,6 +153,7 @@ class EmprestimoList extends HTMLElement {
       filterToggle.onclick = () => {
         const isVisible = filterContent.style.display !== "none";
         filterContent.style.display = isVisible ? "none" : "block";
+        filterToggle.setAttribute("aria-expanded", String(!isVisible));
         filterArrow.textContent = isVisible ? "▶" : "▼";
       };
     }
