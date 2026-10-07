@@ -128,7 +128,7 @@ class AppHeader extends HTMLElement {
     this.querySelector("#logo-bibliotecas").onclick = (e) => {
       e.preventDefault();
       // window.navigate && window.navigate("/livros"); // original
-      go("/livros"); // ADICIONADO
+      go("/dashboard");
     };
     
     this.querySelector("#menu-dashboard-btn").onclick = (e) => {
