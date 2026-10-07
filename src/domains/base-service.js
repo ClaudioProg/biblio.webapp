@@ -116,6 +116,14 @@ export class BaseService {
               const parsed = JSON.parse(raw);
               if (typeof parsed?.detail === "string" && parsed.detail.trim()) {
                 detail = parsed.detail.trim();
+              } else if (parsed && typeof parsed === "object") {
+                const firstValue = Object.values(parsed)[0];
+                const firstMessage = Array.isArray(firstValue)
+                  ? firstValue[0]
+                  : firstValue;
+                if (typeof firstMessage === "string" && firstMessage.trim()) {
+                  detail = firstMessage.trim();
+                }
               }
             } catch {
               // Mantém o texto bruto quando a resposta não puder ser parseada.
