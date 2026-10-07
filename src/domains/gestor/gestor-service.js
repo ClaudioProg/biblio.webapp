@@ -22,6 +22,23 @@ export class GestorService extends BaseService {
     return this.get(`gestor/analytics/territorio/${suffix}`);
   }
 
+  // Gestão de acessos à plataforma (administradores)
+  async listarAcessos() {
+    return this.get("gestor/acessos/");
+  }
+
+  async adicionarAcesso(payload) {
+    return this.post("gestor/acessos/", payload);
+  }
+
+  async atualizarAcesso(id, payload) {
+    return this.patch(`gestor/acessos/${id}/`, payload);
+  }
+
+  async redefinirSenhaAcesso(id, password) {
+    return this.post(`gestor/acessos/${id}/reset-password/`, { password });
+  }
+
   // CRUD de Livros
   async listarLivros(filters = {}) {
     let url = "gestor/livros/";
