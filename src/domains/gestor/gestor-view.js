@@ -256,7 +256,7 @@ export class GestorView {
     }
   }
 
-  renderUnidadeForm(onSubmit, unidade = null, onBack = null) {
+  renderUnidadeForm(onSubmit, unidade = null, onBack = null, bairros = []) {
     this.hideLoading();
     document.querySelector("#app-content").innerHTML = /* html */ `
       <div class="form-container">
@@ -268,12 +268,16 @@ export class GestorView {
       const form = document.querySelector("#unidade-form") || document.querySelector("unidade-form");
       if (!form) return;
 
+      form.bairros = bairros;
+
       if (unidade) {
         if(form.nome) form.nome.value = unidade.nome;
         if(form.endereco) form.endereco.value = unidade.endereco;
         if(form.telefone) form.telefone.value = unidade.telefone || "";
         if(form.email) form.email.value = unidade.email || "";
         if(form.site) form.site.value = unidade.site || "";
+        const bairroSelect = form.querySelector('select[name="ibge_bairro_codigo"]');
+        if (bairroSelect) bairroSelect.value = unidade.ibge_bairro_codigo || "";
       }
 
       form.addEventListener("submit", (event) => {
@@ -294,7 +298,9 @@ export class GestorView {
           endereco: form.querySelector('input[name="endereco"]')?.value || form.endereco?.value,
           telefone: form.querySelector('input[name="telefone"]')?.value || form.telefone?.value,
           email: form.querySelector('input[name="email"]')?.value || form.email?.value,
-          site: form.querySelector('input[name="site"]')?.value || form.site?.value
+          site: form.querySelector('input[name="site"]')?.value || form.site?.value,
+          ibge_bairro_codigo:
+            form.querySelector('select[name="ibge_bairro_codigo"]')?.value || ""
         };
 
         const validation = validateUnidadeFormData(formData);
@@ -466,6 +472,11 @@ export class GestorView {
         <p><strong>Telefone:</strong> ${escapeHtml(unidade.telefone || "-")}</p>
         <p><strong>Email:</strong> ${escapeHtml(unidade.email || "-")}</p>
         <p><strong>Site:</strong> ${escapeHtml(unidade.site || "-")}</p>
+        <p><strong>Bairro IBGE:</strong> ${escapeHtml(
+          unidade.ibge_bairro_nome ||
+            unidade.ibge_bairro_codigo ||
+            "Não informado"
+        )}</p>
       </div>
     `;
     document.getElementById("voltar-unidade-detalhe").onclick = () =>

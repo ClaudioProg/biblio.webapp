@@ -45,6 +45,7 @@ class UnidadeList extends HTMLElement {
             <tr>
               <th>Nome</th>
               <th>Endereço</th>
+              <th>Bairro IBGE</th>
               <th>Telefone</th>
               <th>Email</th>
               <th>Site</th>
@@ -60,6 +61,11 @@ class UnidadeList extends HTMLElement {
               <tr>
                 <td>${escapeHtml(unidade.nome)}</td>
                 <td>${escapeHtml(unidade.endereco || "")}</td>
+                <td>${escapeHtml(
+                  unidade.ibge_bairro_nome ||
+                    unidade.ibge_bairro_codigo ||
+                    "—"
+                )}</td>
                 <td>${escapeHtml(unidade.telefone || "")}</td>
                 <td>${escapeHtml(unidade.email || "")}</td>
                 <td>${escapeHtml(unidade.site || "")}</td>
@@ -80,7 +86,7 @@ class UnidadeList extends HTMLElement {
             `
                     )
                     .join("")
-                : '<tr><td colspan="6" style="text-align:center;color:#888;">Nenhuma unidade cadastrada.</td></tr>'
+                : '<tr><td colspan="7" style="text-align:center;color:#888;">Nenhuma unidade cadastrada.</td></tr>'
             }
           </tbody>
         </table>

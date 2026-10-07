@@ -131,6 +131,11 @@ const unidadeRules = {
   },
   email: { label: "E-mail", type: "email", maxLength: 254 },
   site: { label: "Site", type: "url", maxLength: 200 },
+  ibge_bairro_codigo: {
+    label: "Bairro IBGE",
+    pattern: /^\d{10}$/,
+    patternMessage: "Código de bairro IBGE inválido.",
+  },
 };
 
 const usuarioRules = {
@@ -197,6 +202,9 @@ export function validateLivroFormData(payload) {
 
 export function validateUnidadeFormData(payload) {
   const cleanData = sanitizePayload(payload);
+  if (cleanData.ibge_bairro_codigo === "") {
+    cleanData.ibge_bairro_codigo = null;
+  }
   const validation = validatePayload(cleanData, unidadeRules);
   return { cleanData, ...validation };
 }
