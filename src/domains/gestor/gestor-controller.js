@@ -143,10 +143,8 @@ export class GestorController {
     const onDelete =
       callbacks.onDelete ||
       (async (livroId) => {
-        if (confirm("Deseja realmente remover este livro?")) {
-          await this.removerLivro(livroId);
-          await this.showLivrosPage(callbacks);
-        }
+        await this.removerLivro(livroId);
+        await this.showLivrosPage(callbacks);
       });
 
     const onView = callbacks.onView || ((livroId) => this.showLivroDetalhe(livroId));
@@ -345,10 +343,8 @@ export class GestorController {
     const onDelete =
       callbacks.onDelete ||
       (async (id) => {
-        if (confirm("Deseja realmente remover esta unidade?")) {
-          await this.service.removerUnidade(id);
-          await this.showUnidadesPage(callbacks);
-        }
+        await this.service.removerUnidade(id);
+        await this.showUnidadesPage(callbacks);
       });
 
     const onView = callbacks.onView || ((id) => this.showUnidadeDetalhe(id));
@@ -454,9 +450,7 @@ export class GestorController {
     const onDelete =
       callbacks.onDelete ||
       (async (id) => {
-        if (confirm("Deseja realmente remover este usuário?")) {
-          await this.deleteUsuario(id);
-        }
+        await this.deleteUsuario(id);
       });
 
     const onFilter =
