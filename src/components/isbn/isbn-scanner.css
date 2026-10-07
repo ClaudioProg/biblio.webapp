@@ -1,0 +1,99 @@
+.isbn-scanner-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.78);
+}
+
+.isbn-scanner-backdrop[hidden] {
+  display: none;
+}
+
+.isbn-scanner-dialog {
+  width: min(100%, 680px);
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+  border-radius: 14px;
+  background: var(--color-background);
+  padding: 1rem;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.38);
+}
+
+.isbn-scanner-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.isbn-scanner-header h3 {
+  margin: 0;
+}
+
+.isbn-scanner-header p {
+  margin: .3rem 0 0;
+  color: var(--color-feedback-neutral);
+}
+
+.isbn-scanner-close {
+  min-width: 2.4rem;
+}
+
+.isbn-scanner-video-wrap {
+  position: relative;
+  margin-top: 1rem;
+  min-height: 260px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #111827;
+}
+
+.isbn-scanner-video {
+  display: block;
+  width: 100%;
+  max-height: 62dvh;
+  object-fit: cover;
+}
+
+.isbn-scanner-frame {
+  position: absolute;
+  left: 9%;
+  right: 9%;
+  top: 50%;
+  height: 34%;
+  transform: translateY(-50%);
+  border: 3px solid rgba(255, 255, 255, .92);
+  border-radius: 12px;
+  box-shadow: 0 0 0 999px rgba(15, 23, 42, .24);
+  pointer-events: none;
+}
+
+.isbn-scanner-status {
+  margin: .85rem 0 0;
+  min-height: 1.5rem;
+  color: var(--color-feedback-neutral);
+}
+
+.isbn-scanner-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: .75rem;
+}
+
+@media (max-width: 600px) {
+  .isbn-scanner-backdrop {
+    padding: .5rem;
+  }
+
+  .isbn-scanner-dialog {
+    padding: .75rem;
+    max-height: calc(100dvh - 1rem);
+  }
+
+  .isbn-scanner-video-wrap {
+    min-height: 220px;
+  }
+}

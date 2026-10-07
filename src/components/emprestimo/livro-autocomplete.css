@@ -11,7 +11,7 @@
 .livro-autocomplete-control {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto auto;
   align-items: stretch;
   border: 1px solid var(--color-border-subtle);
   border-radius: 9px;
@@ -41,6 +41,7 @@
   cursor: not-allowed;
 }
 
+.livro-autocomplete-control .livro-autocomplete-scan,
 .livro-autocomplete-control .livro-autocomplete-clear {
   border: 0;
   border-left: 1px solid var(--color-border-subtle);
@@ -51,6 +52,8 @@
   margin-bottom: 0;
 }
 
+.livro-autocomplete-control .livro-autocomplete-scan:hover:not(:disabled),
+.livro-autocomplete-control .livro-autocomplete-scan:focus-visible:not(:disabled),
 .livro-autocomplete-control .livro-autocomplete-clear:hover:not(:disabled),
 .livro-autocomplete-control .livro-autocomplete-clear:focus-visible:not(:disabled) {
   background: color-mix(in srgb, var(--color-primary-light) 14%, var(--color-surface-muted));
@@ -129,4 +132,12 @@
 
 .livro-autocomplete-hint:empty {
   min-height: 1.1rem;
+}
+
+.livro-autocomplete-hint.is-error {
+  color: var(--color-feedback-error);
+}
+
+.livro-autocomplete-hint.is-success {
+  color: var(--color-feedback-success);
 }

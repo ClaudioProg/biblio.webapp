@@ -26,23 +26,24 @@
 }
 
 .isbn-input-wrapper {
-    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 0.45rem;
+    align-items: stretch;
 }
 
 .isbn-input-wrapper input {
-    padding-right: 2.6rem;
+    margin-bottom: 0;
 }
 
-.isbn-lookup-trigger {
-    position: absolute;
-    top: 0;
-    right: 0.55rem;
-    transform: translateY(50%);
-    width: 1.7rem;
-    height: 1.7rem;
-    border: 0;
-    border-radius: 999px;
-    background: transparent;
+.isbn-lookup-trigger,
+.isbn-scan-trigger {
+    width: 2.6rem;
+    min-width: 2.6rem;
+    margin-bottom: 0;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 8px;
+    background: var(--color-surface-muted);
     color: var(--color-feedback-neutral);
     display: inline-flex;
     align-items: center;
@@ -52,9 +53,11 @@
 }
 
 .isbn-lookup-trigger:hover,
-.isbn-lookup-trigger:focus-visible {
-    color: var(--color-feedback-loading);
-    background: var(--color-surface-muted);
+.isbn-lookup-trigger:focus-visible,
+.isbn-scan-trigger:hover,
+.isbn-scan-trigger:focus-visible {
+    color: var(--color-primary-darker);
+    background: color-mix(in srgb, var(--color-primary-light) 14%, var(--color-surface-muted));
 }
 
 .isbn-input-wrapper[data-loading="true"] .isbn-lookup-trigger {
@@ -64,6 +67,13 @@
 
 .isbn-input-wrapper[data-loading="true"] .isbn-lookup-trigger i {
     animation: isbn-inline-spin 0.9s linear infinite;
+}
+
+.isbn-help {
+    display: block;
+    margin-top: 0.15rem;
+    color: var(--color-feedback-neutral);
+    font-size: 0.8rem;
 }
 
 .isbn-feedback {
