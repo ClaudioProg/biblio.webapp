@@ -1,4 +1,5 @@
 import "./emprestimo-list.css";
+import { escapeHtml } from "../../utils/html.js";
 
 class EmprestimoList extends HTMLElement {
   _formatDate(dateString) {
@@ -104,9 +105,9 @@ class EmprestimoList extends HTMLElement {
                       .map(
                         (item) => /* html */ `
                 <tr>
-                  <td>${item.livro_titulo || "-"}</td>
-                  <td>${item.unidade_nome || "-"}</td>
-                  <td>${item.usuario_nome || "-"}</td>
+                  <td>${escapeHtml(item.livro_titulo || "-")}</td>
+                  <td>${escapeHtml(item.unidade_nome || "-")}</td>
+                  <td>${escapeHtml(item.usuario_nome || "-")}</td>
                   <td>${this._formatDate(item.data_emprestimo)}</td>
                   <td>${this._formatDate(item.data_devolucao || item.data_prevista_devolucao)}</td>
                   <td>
