@@ -5,6 +5,24 @@
     padding: 0.25rem 0.5rem;
 }
 
+.logo-button {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    padding: 0.25rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.logo-button:focus-visible,
+.hamburger-btn:focus-visible,
+.close-menu-btn:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+}
+
 .header .logo {
     max-height: 60px;
     cursor: pointer;
