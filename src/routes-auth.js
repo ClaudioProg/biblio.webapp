@@ -33,7 +33,7 @@ export async function authRoutes({ authController, authView, navigate }) {
         try {
           // garante chamada assíncrona; ajuste se seu login retornar boolean/throw
           await authController.login(username, password);
-          navigate("/livros"); // só após sucesso
+          navigate("/dashboard"); // só após sucesso
         } catch (err) {
           console.error("Falha no login:", err);
           // Se seu authView tiver método para mostrar erro, use-o:
