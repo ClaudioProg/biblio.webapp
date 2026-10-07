@@ -1,3 +1,5 @@
+import { isValidIsbn10, isValidIsbn13, normalizeIsbn } from "./isbn.js";
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function digitsCount(value = "") {
@@ -100,8 +102,13 @@ const livroRules = {
     label: "ISBN",
     required: true,
     maxLength: 13,
-    pattern: /^(?:\d{10}|\d{13}|\d{9}[\dXx])$/,
-    patternMessage: "ISBN deve conter 10 ou 13 caracteres válidos.",
+    customValidate: (value) => {
+      const isbn = normalizeIsbn(value);
+      if (!(isValidIsbn10(isbn) || isValidIsbn13(isbn))) {
+        return "ISBN inválido. Confira os 10 ou 13 dígitos.";
+      }
+      return "";
+    },
   },
   editora: { label: "Editora", maxLength: 255 },
   idioma: { label: "Idioma", maxLength: 50 },
@@ -181,6 +188,9 @@ const usuarioRules = {
 
 export function validateLivroFormData(payload) {
   const cleanData = sanitizePayload(payload);
+  if (cleanData.isbn) {
+    cleanData.isbn = normalizeIsbn(cleanData.isbn);
+  }
   const validation = validatePayload(cleanData, livroRules);
   return { cleanData, ...validation };
 }
