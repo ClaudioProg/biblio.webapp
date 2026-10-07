@@ -351,6 +351,7 @@ class AcessoPage extends HTMLElement {
           showToast("Acesso criado com sucesso.", "success");
         }
         this._editingAccount = null;
+        this.render();
       } catch (error) {
         showToast(error?.message || "Não foi possível salvar o acesso.", "error");
       } finally {
