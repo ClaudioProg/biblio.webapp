@@ -50,6 +50,21 @@ export class GestorController {
     }
   }
 
+  async showDashboard() {
+    this.view = this.view || new GestorView();
+    this.view.showLoading("Carregando indicadores...");
+
+    try {
+      const analytics = await this.service.obterAnalyticsResumo();
+      this.view.renderDashboard(analytics || {});
+    } catch (err) {
+      console.error("Erro ao carregar dashboard:", err);
+      this.view.hideLoading();
+      showToast("Não foi possível carregar os indicadores agora.", "error");
+      throw err;
+    }
+  }
+
   /* ───────────────────────────────
    * LIVROS — CRUD
    * ─────────────────────────────── */
