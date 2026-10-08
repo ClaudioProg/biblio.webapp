@@ -49,10 +49,14 @@ export class BaseService {
   }
 
   async request(endpoint, { method = "GET", body, headers = {}, timeoutMs } = {}) {
-    // Inclui token JWT de autenticação se disponível
+    const url = this.buildUrl(endpoint);
+    const isLoginRequest = /\/gestor\/auth\/login\/?$/i.test(url);
+
     const token =
-      (typeof localStorage !== "undefined" && localStorage.getItem("authToken")) ||
-      null;
+      !isLoginRequest &&
+      typeof localStorage !== "undefined"
+        ? localStorage.getItem("authToken")
+        : null;
 
     const finalHeaders = {
       "Content-Type": "application/json",
@@ -62,8 +66,6 @@ export class BaseService {
     if (token) {
       finalHeaders["Authorization"] = `Token ${token}`;
     }
-
-    const url = this.buildUrl(endpoint);
 
     let lastErr;
     for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
@@ -85,7 +87,6 @@ export class BaseService {
 
         // Em chamadas autenticadas, 401 encerra a sessão local.
         // No endpoint de login, deixa o tratamento normal extrair a mensagem da API.
-        const isLoginRequest = /\/gestor\/auth\/login\/?$/i.test(url);
         if (res.status === 401 && !isLoginRequest) {
           console.warn("Token inválido - redirecionando para login");
           localStorage.removeItem("authToken");
