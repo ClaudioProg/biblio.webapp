@@ -70,6 +70,40 @@ test("login request never sends a stale Authorization token", async () => {
   assert.equal(capturedHeaders.Authorization, undefined);
 });
 
+test("raw HTML 500 responses become a friendly message", async () => {
+  installStorage();
+
+  globalThis.fetch = async () => ({
+    status: 500,
+    ok: false,
+    statusText: "Internal Server Error",
+    headers: {
+      get(name) {
+        return String(name).toLowerCase() === "content-type"
+          ? "text/html; charset=utf-8"
+          : null;
+      },
+    },
+    async text() {
+      return '<!doctype html><html><head><title>Server Error (500)</title></head></html>';
+    },
+    async json() {
+      throw new Error("not json");
+    },
+  });
+
+  const api = new BaseService("https://example.test");
+
+  await assert.rejects(
+    () =>
+      api.post("gestor/auth/login/", {
+        username: "Claudio",
+        password: "senha",
+      }),
+    /servidor encontrou um erro interno/i
+  );
+});
+
 test("authenticated API requests still send the current token", async () => {
   installStorage({
     authToken: "token-valido",
