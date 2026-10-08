@@ -112,7 +112,15 @@ export class BaseService {
           }
           let detail = raw || res.statusText || "Erro HTTP";
 
-          if (raw && contentType.includes("application/json")) {
+          const looksLikeHtml =
+            contentType.includes("text/html") ||
+            /^\s*<!doctype html/i.test(raw) ||
+            /^\s*<html/i.test(raw);
+
+          if (res.status >= 500 && looksLikeHtml) {
+            detail =
+              "O servidor encontrou um erro interno. Tente novamente em instantes.";
+          } else if (raw && contentType.includes("application/json")) {
             try {
               const parsed = JSON.parse(raw);
               if (typeof parsed?.detail === "string" && parsed.detail.trim()) {
