@@ -98,3 +98,117 @@
 .table-responsive thead th:last-child {
     z-index: 22;
 }
+
+/* Mobile: table rows become readable cards instead of forcing horizontal scroll. */
+@media (max-width: 760px) {
+    .table-responsive:not(.access-desktop-table) {
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .table-responsive:not(.access-desktop-table).is-scrollable::after,
+    .table-responsive:not(.access-desktop-table).is-scrollable.scrolled::before {
+        display: none;
+    }
+
+    .table-responsive:not(.access-desktop-table) .mobile-card-table {
+        display: block;
+        width: 100%;
+        border-collapse: separate;
+    }
+
+    .table-responsive:not(.access-desktop-table) .mobile-card-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    .table-responsive:not(.access-desktop-table) .mobile-card-table tbody {
+        display: grid;
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    .table-responsive:not(.access-desktop-table) .mobile-card-table tbody tr {
+        display: block;
+        width: 100%;
+        border: 1px solid var(--color-border-subtle);
+        border-radius: 12px;
+        background: var(--color-background);
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05);
+    }
+
+    .table-responsive:not(.access-desktop-table) .mobile-card-table tbody td {
+        position: static !important;
+        display: grid;
+        grid-template-columns: minmax(7.25rem, 38%) minmax(0, 1fr);
+        gap: 0.65rem;
+        align-items: start;
+        width: 100%;
+        min-width: 0;
+        padding: 0.7rem 0.8rem;
+        white-space: normal !important;
+        overflow-wrap: anywhere;
+        border: 0;
+        border-bottom: 1px solid var(--color-border-subtle);
+        background: transparent !important;
+        text-align: left !important;
+    }
+
+    .table-responsive:not(.access-desktop-table) .mobile-card-table tbody td:last-child {
+        border-bottom: 0;
+        border-left: 0;
+    }
+
+    .table-responsive:not(.access-desktop-table) .mobile-card-table tbody td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        font-size: 0.82rem;
+        line-height: 1.35;
+        color: var(--color-feedback-neutral);
+    }
+
+    .table-responsive:not(.access-desktop-table) .mobile-card-table tbody td[data-label="Ações"] {
+        grid-template-columns: 1fr;
+    }
+
+    .table-responsive:not(.access-desktop-table) .mobile-card-table tbody td[data-label="Ações"]::before {
+        margin-bottom: 0.1rem;
+    }
+
+    .table-responsive:not(.access-desktop-table) .mobile-card-table tbody td[colspan] {
+        display: block;
+        padding: 1rem;
+        text-align: center !important;
+    }
+
+    .table-responsive:not(.access-desktop-table) .mobile-card-table tbody td[colspan]::before {
+        content: none;
+    }
+
+    .table-responsive:not(.access-desktop-table) .list-actions {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+    }
+
+    .table-responsive:not(.access-desktop-table) .list-actions button,
+    .table-responsive:not(.access-desktop-table) .livro-actions-toggle {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .dashboard-territory-table-wrap {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+}
