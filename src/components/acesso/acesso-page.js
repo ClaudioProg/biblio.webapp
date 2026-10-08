@@ -54,7 +54,7 @@ class AcessoPage extends HTMLElement {
         </div>
 
         <article class="access-panel">
-          <div class="table-responsive">
+          <div class="access-desktop-table table-responsive">
             <table class="striped access-table">
               <thead>
                 <tr>
@@ -81,6 +81,19 @@ class AcessoPage extends HTMLElement {
                 }
               </tbody>
             </table>
+          </div>
+
+          <div class="access-mobile-list">
+            ${this.accounts.length
+              ? this.accounts
+                  .map((account) => this._mobileCardTemplate(account))
+                  .join("")
+              : `
+                <div class="access-mobile-empty">
+                  Nenhuma conta de acesso encontrada.
+                </div>
+              `
+            }
           </div>
         </article>
 
@@ -246,6 +259,50 @@ class AcessoPage extends HTMLElement {
           </button>
         </div>
       </form>
+    `;
+  }
+
+  _mobileCardTemplate(account) {
+    const lastLogin = account.last_login
+      ? new Date(account.last_login).toLocaleString("pt-BR")
+      : "Nunca";
+
+    return `
+      <article class="access-mobile-card">
+        <div class="access-mobile-card-header">
+          <div>
+            <strong>${escapeHtml(accessDisplayName(account))}</strong>
+            <code>${escapeHtml(account.username)}</code>
+          </div>
+          <span class="access-status ${account.active ? "is-active" : "is-inactive"}">
+            ${account.active ? "Ativa" : "Inativa"}
+          </span>
+        </div>
+
+        <dl class="access-mobile-meta">
+          <div><dt>Perfil</dt><dd>${escapeHtml(accessRoleLabel(account.role))}</dd></div>
+          <div><dt>E-mail</dt><dd>${escapeHtml(account.email || "—")}</dd></div>
+          <div><dt>Último acesso</dt><dd>${escapeHtml(lastLogin)}</dd></div>
+        </dl>
+
+        <div class="access-row-actions access-mobile-actions">
+          <button type="button" class="outline access-edit" data-id="${account.id}">
+            <i class="fa-solid fa-pen" aria-hidden="true"></i> Editar
+          </button>
+          <button type="button" class="outline access-password" data-id="${account.id}">
+            <i class="fa-solid fa-key" aria-hidden="true"></i> Senha
+          </button>
+          <button
+            type="button"
+            class="outline access-toggle"
+            data-id="${account.id}"
+            data-active="${account.active ? "true" : "false"}"
+          >
+            <i class="fa-solid fa-power-off" aria-hidden="true"></i>
+            ${account.active ? "Desativar" : "Ativar"}
+          </button>
+        </div>
+      </article>
     `;
   }
 
