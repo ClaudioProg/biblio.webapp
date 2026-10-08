@@ -163,3 +163,14 @@
         right: -300px;
     }
 }
+
+.side-menu-user {
+  margin: .2rem 0 0;
+  font-size: .78rem;
+  opacity: .72;
+  line-height: 1.35;
+}
+
+.side-menu-user strong {
+  overflow-wrap: anywhere;
+}
