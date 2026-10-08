@@ -16,6 +16,10 @@ export class AuthController {
       throw new Error("Informe usuário e senha.");
     }
 
+    // Uma tentativa de login inicia uma nova sessão e não deve herdar
+    // tokens inválidos/antigos gravados pelo navegador.
+    this.clearLocalSession();
+
     const response = await this.api.post("gestor/auth/login/", {
       username: normalizedUsername,
       password: normalizedPassword,
