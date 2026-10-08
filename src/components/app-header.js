@@ -1,5 +1,6 @@
 import "./app-header.css";
 import { isAdminUser } from "../utils/access.js";
+import { escapeHtml } from "../utils/html.js";
 
 // ADICIONADO: helper de navegação com fallback
 function go(path) {
@@ -37,7 +38,12 @@ class AppHeader extends HTMLElement {
       
       <div class="side-menu" id="side-menu">
         <div class="side-menu-header">
-          <h3>Menu</h3>
+          <div>
+            <h3>Menu</h3>
+            <p class="side-menu-user">
+              Conectado como <strong>${escapeHtml(currentUser?.username || "usuário")}</strong>
+            </p>
+          </div>
           <button class="close-menu-btn" id="close-menu-btn" aria-label="Fechar menu">
             <i class="fa-solid fa-times"></i>
           </button>
@@ -91,7 +97,7 @@ class AppHeader extends HTMLElement {
           <li>
             <a href="#" id="menu-password-btn" class="side-menu-item">
               <i class="fa-solid fa-key"></i>
-              <span>Alterar senha</span>
+              <span>Alterar minha senha</span>
             </a>
           </li>
           <li class="menu-divider"></li>
