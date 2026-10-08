@@ -6,6 +6,9 @@ import {
   formatNullableNumber,
 } from "../../utils/territory.js";
 
+const DEFAULT_POWERBI_EMBED_URL =
+  "https://app.powerbi.com/reportEmbed?reportId=20f5c252-8214-44e3-9174-8ab93b303f62&autoAuth=true&ctid=dee74457-d751-4011-a5c4-44560cf8b415";
+
 class DashboardPage extends HTMLElement {
   constructor() {
     super();
@@ -48,11 +51,12 @@ class DashboardPage extends HTMLElement {
     const validacao = territorio.validacao || {};
     const territorioMeta = territorio.meta || {};
 
-    const powerBiUrl =
+    const configuredPowerBiUrl =
       typeof import.meta !== "undefined" &&
       import.meta?.env?.VITE_POWERBI_EMBED_URL
         ? String(import.meta.env.VITE_POWERBI_EMBED_URL).trim()
         : "";
+    const powerBiUrl = configuredPowerBiUrl || DEFAULT_POWERBI_EMBED_URL;
 
     this.innerHTML = `
       <section class="dashboard-page">
@@ -221,10 +225,10 @@ class DashboardPage extends HTMLElement {
           <div>
             <h3>Power BI</h3>
             <p>
-              A base territorial oficial e os indicadores agregados da
-              plataforma já estão estruturados. O painel Power BI será
-              incorporado neste espaço após a modelagem final, publicação e
-              validação com a biblioteca parceira.
+              Painel analítico publicado no Power BI com indicadores agregados
+              da plataforma e contexto territorial do Censo Demográfico 2022.
+              O acesso ao relatório incorporado respeita a autenticação e as
+              permissões da conta Microsoft autorizada.
             </p>
           </div>
           ${
