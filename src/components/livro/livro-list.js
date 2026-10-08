@@ -1,6 +1,7 @@
 import "./livro-list.css";
 import { getLivroActionsDropdown } from "./livro-actions-dropdown.js";
 import { escapeHtml } from "../../utils/html.js";
+import { sortLivrosByTitle } from "../../utils/livros.js";
 
 // Web Component para a lista de livros
 class LivroList extends HTMLElement {
@@ -11,7 +12,7 @@ class LivroList extends HTMLElement {
   }
 
   set livros(livros) {
-    this._livros = livros;
+    this._livros = sortLivrosByTitle(livros);
     this.updateTable();
   }
 
